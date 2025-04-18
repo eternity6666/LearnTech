@@ -18,38 +18,132 @@ struct AnimatedSineWaveDemo: View {
         in: .common
     ).autoconnect()
     @State private var gifSize: CGSize = .init(width: 240, height: 240)
-    @State var textStr = "吉祥如意、好事连连、心想事成、寿与天齐、花开富贵、大吉大利、必定如意、一帆风顺、福寿安康、万事如意、事事顺心、福如东海、寿比南山、金玉满堂、人见人爱、吉祥康乐、似锦如织"
+    @State var textStr = "吉祥如意"
     @State var colorList: [Color] = [.purple]
+    @State var isGif: Bool = true
+    @State var isClear: Bool = true
+    @State var bgColor: Color = .blue
+    private let KEY_GIF_MAKER_HISTORY_DATA = "KEY_GIF_MAKER_HISTORY_DATA"
 
     var body: some View {
         VStack {
+            controlArea
+            previewArea
+        }
+    }
+
+    private var controlArea: some View {
+        HStack {
             VStack {
-                HStack {
-                    ForEach(self.colorList.indices, id: \.self) { index in
-                        ColorPicker(
-                            selection: .init(
-                                get: { self.colorList[index] },
-                                set: { self.colorList[index] = $0 }
-                            )
-                        ) {
-                        }
-                    }
-                    Button {
-                        self.colorList.append(self.colorList.last ?? .cyan)
-                    } label: {
-                        Text("+")
-                    }
+                inputArea
+                colorPicker
+            }
+            styleArea
+            VStack {
+                Button {
+                    loadHistory()
+                } label: {
+                    Text("loadHistory")
                 }
                 Button {
                     saveImage()
                 } label: {
-                    Text("save")
+                    Text("output")
                 }
             }
-            gifItem()
-                .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset))
+        }
+    }
+
+    private var styleArea: some View {
+        VStack {
+            HStack {
+                Text("width")
+                TextField(
+                    value: .init(
+                        get: { self.gifSize.width },
+                        set: { self.gifSize.width = $0 ?? self.gifSize.width }
+                    ),
+                    format: .number
+                ) {
+                }
+            }
+            HStack {
+                Text("height")
+                TextField(
+                    value: .init(
+                        get: { self.gifSize.height },
+                        set: { self.gifSize.height = $0 ?? self.gifSize.height }
+                    ),
+                    format: .number
+                ) {
+                }
+            }
+            HStack {
+                Text("isGif")
+                Spacer()
+                Toggle(isOn: $isGif) {
+                }
+            }
+            HStack {
+                Text("isClear")
+                Spacer()
+                Toggle(isOn: $isClear) {
+                }
+            }
+            if !isClear {
+                HStack {
+                    Text("bgColor")
+                    Spacer()
+                    ColorPicker(selection: $bgColor) {
+                    }
+                }
+            }
+        }
+        .frame(width: 120)
+    }
+    
+    private var inputArea: some View {
+        TextEditor(text: $textStr)
+            .frame(maxWidth: 600, maxHeight: 200)
+            .multilineTextAlignment(.leading)
+    }
+    
+    private var colorPicker: some View {
+        HStack {
+            ForEach(self.colorList.indices, id: \.self) { index in
+                ColorPicker(
+                    selection: .init(
+                        get: { self.colorList[index] },
+                        set: { self.colorList[index] = $0 }
+                    )
+                ) {
+                }
+            }
+            Button {
+                self.colorList.append(self.colorList.last ?? .cyan)
+            } label: {
+                Text("+")
+            }
+        }
+    }
+    
+    private var previewArea: some View {
+        HStack {
+            let textList = self.textStr.split { char in
+                ",，、;；".contains(where: { $0 == char })
+            }.prefix(4)
+            ForEach(textList.indices, id: \.self) { index in
+                if index >= 0 && index < textList.endIndex {
+                    let text = String(textList[index])
+                    gifItem(text: text)
+                        .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset))
+                }
+            }
         }
         .onReceive(timer) { _ in
+            if !self.isGif {
+                return
+            }
             self.offset += 10
             if self.offset >= self.gifSize.width {
                 self.offset = 0
@@ -61,7 +155,7 @@ struct AnimatedSineWaveDemo: View {
         text: String = "遥遥领先"
     ) -> some View {
         return Text(text)
-            .font(.custom("baotuxiaobaiti", size:  60))
+            .font(.custom("baotuxiaobaiti", size: gifSize.width / CGFloat(text.count)))
             .frame(width: gifSize.width, height: gifSize.height)
             .foregroundStyle(
                 .linearGradient(
@@ -70,9 +164,29 @@ struct AnimatedSineWaveDemo: View {
                     endPoint: .trailing
                 )
             )
+            .background(isClear ? .clear : bgColor)
+    }
+    
+    private func loadHistory() {
+        if let data = UserDefaults.standard.value(forKey: KEY_GIF_MAKER_HISTORY_DATA) as? Data,
+           let historyData = try? JSONDecoder().decode(HistoryData.self, from: data) {
+            self.textStr = historyData.text
+            self.colorList = historyData.color
+        }
+    }
+
+    private func saveHistoryData() {
+        if let data = try? JSONEncoder().encode(HistoryData(text: self.textStr, color: self.colorList)) {
+            UserDefaults.standard.set(data, forKey: KEY_GIF_MAKER_HISTORY_DATA)
+        }
     }
     
     func saveImage() {
+        let historyData: HistoryData = .init(
+            text: self.textStr,
+            color: self.colorList
+        )
+        saveHistoryData()
         guard let downloadPath = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true).first else {
             print("无法获取下载目录")
             return
@@ -89,14 +203,23 @@ struct AnimatedSineWaveDemo: View {
             }
             textArray.forEach { item in
                 let text = String(item)
-                let frames = captureFrames(view: gifItem(text: text), frameCount: 30)
-                let gifURL = url.appendingPathComponent("\(text).gif")
-                
-                createGIF(from: frames, delay: 0.05, outputURL: gifURL)
-                print("GIF saved at: \(gifURL)")
+                if !text.isEmpty {
+                    if (self.isGif) {
+                        let frames = captureFrames(view: gifItem(text: text), frameCount: 30)
+                        let fileUrl = url.appendingPathComponent("\(text).gif")
+                        createGIF(from: frames, delay: 0.05, outputURL: fileUrl)
+                        print("GIF saved at: \(fileUrl)")
+                    } else {
+                        if let image = captureFrames(view: gifItem(text: text), frameCount: 30).first {
+                            let fileUrl = url.appendingPathComponent("\(text).png")
+                            createPNG(from: image, outputURL: fileUrl)
+                            print("PNG saved at: \(fileUrl)")
+                        }
+                    }
+                }
             }
         } catch {
-            print("创建目录失败: \(error)")
+            print("创建失败: \(error)")
         }
     }
     
@@ -111,10 +234,20 @@ struct AnimatedSineWaveDemo: View {
             let renderer = ImageRenderer(content: view2)
             if let image = renderer.cgImage {
                 images.append(image)
+                if !isGif {
+                    return images
+                }
             }
             offset += self.gifSize.width / Double(frameCount)
         }
         return images
+    }
+    
+    func createPNG(from image: CGImage, outputURL: URL) {
+        if let destination = CGImageDestinationCreateWithURL(outputURL as CFURL, kUTTypePNG, 1, nil) {
+            CGImageDestinationAddImage(destination, image, nil)
+            CGImageDestinationFinalize(destination)
+        }
     }
     
     func createGIF(from images: [CGImage], delay: Double, outputURL: URL) {
@@ -130,6 +263,11 @@ struct AnimatedSineWaveDemo: View {
         
         CGImageDestinationFinalize(destination)
     }
+}
+
+struct HistoryData: Codable {
+    let text: String
+    let color: [Color]
 }
 
 struct AnimatedSineWaveOffsetRender: TextRenderer {
