@@ -8,6 +8,7 @@
 import SwiftUI
 import SpriteKit
 import ImageIO
+import AppKit
 
 struct AnimatedSineWaveDemo: View {
     @State var offset: Double = 0
@@ -43,25 +44,27 @@ struct AnimatedSineWaveDemo: View {
     }
     
     func saveImage() {
-        guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+        guard let downloadPath = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true).first else {
+            print("无法获取下载目录")
             return
         }
-        let url = documentsURL.appendingPathComponent("\(Int(Date.now.timeIntervalSince1970))")
-        if !FileManager.default.fileExists(atPath: url.path) {
-            do {
-                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-            } catch {
-                print("创建目录失败: \(error)")
-                return
-            }
-        }
-        self.textStr.split(separator: "、").forEach { item in
-            let text = String(item)
-            let frames = captureFrames(view: gifItem(text: text), frameCount: 30)
-            let gifURL = url.appendingPathComponent("\(text).gif")
+        
+        let folderName = "\(Int(Date.now.timeIntervalSince1970))"
+        let url = URL(fileURLWithPath: downloadPath).appendingPathComponent(folderName)
+        
+        do {
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
             
-            createGIF(from: frames, delay: 0.1, outputURL: gifURL)
-            print("GIF saved at: \(gifURL)")
+            self.textStr.split(separator: "、").forEach { item in
+                let text = String(item)
+                let frames = captureFrames(view: gifItem(text: text), frameCount: 30)
+                let gifURL = url.appendingPathComponent("\(text).gif")
+                
+                createGIF(from: frames, delay: 0.05, outputURL: gifURL)
+                print("GIF saved at: \(gifURL)")
+            }
+        } catch {
+            print("创建目录失败: \(error)")
         }
     }
     
