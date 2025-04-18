@@ -12,35 +12,64 @@ import AppKit
 
 struct AnimatedSineWaveDemo: View {
     @State var offset: Double = 0
-    @State var timer = Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()
+    @State var timer = Timer.publish(
+        every: 0.05,
+        on: .main,
+        in: .common
+    ).autoconnect()
+    @State private var gifSize: CGSize = .init(width: 240, height: 240)
     @State var textStr = "吉祥如意、好事连连、心想事成、寿与天齐、花开富贵、大吉大利、必定如意、一帆风顺、福寿安康、万事如意、事事顺心、福如东海、寿比南山、金玉满堂、人见人爱、吉祥康乐、似锦如织"
-    
-    private func gifItem(
-        text: String = "遥遥领先"
-    ) -> some View {
-        return Text(text)
-            .font(.custom("baotuxiaobaiti", size: 48))
-            .frame(width: 240, height: 240)
-            .background(.blue.opacity(0.5))
-    }
-    
+    @State var colorList: [Color] = [.purple]
+
     var body: some View {
-        gifItem()
-            .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset))
-            .opacity(0.1)
-            .onReceive(timer) { _ in
-                if offset > 360 {
-                    offset = 0 // 重置时间偏移
+        VStack {
+            VStack {
+                HStack {
+                    ForEach(self.colorList.indices, id: \.self) { index in
+                        ColorPicker(
+                            selection: .init(
+                                get: { self.colorList[index] },
+                                set: { self.colorList[index] = $0 }
+                            )
+                        ) {
+                        }
+                    }
+                    Button {
+                        self.colorList.append(self.colorList.last ?? .cyan)
+                    } label: {
+                        Text("+")
+                    }
                 }
-                offset += 10
-            }
-            .overlay {
                 Button {
                     saveImage()
                 } label: {
                     Text("save")
                 }
             }
+            gifItem()
+                .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset))
+        }
+        .onReceive(timer) { _ in
+            self.offset += 10
+            if self.offset >= self.gifSize.width {
+                self.offset = 0
+            }
+        }
+    }
+    
+    private func gifItem(
+        text: String = "遥遥领先"
+    ) -> some View {
+        return Text(text)
+            .font(.custom("baotuxiaobaiti", size:  60))
+            .frame(width: gifSize.width, height: gifSize.height)
+            .foregroundStyle(
+                .linearGradient(
+                    colors: self.colorList,
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
     }
     
     func saveImage() {
@@ -55,7 +84,10 @@ struct AnimatedSineWaveDemo: View {
         do {
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
             
-            self.textStr.split(separator: "、").forEach { item in
+            let textArray = self.textStr.split { char in
+                ",，、;；".contains(where: { $0 == char })
+            }
+            textArray.forEach { item in
                 let text = String(item)
                 let frames = captureFrames(view: gifItem(text: text), frameCount: 30)
                 let gifURL = url.appendingPathComponent("\(text).gif")
@@ -80,7 +112,7 @@ struct AnimatedSineWaveDemo: View {
             if let image = renderer.cgImage {
                 images.append(image)
             }
-            offset += 360.0 / Double(frameCount)
+            offset += self.gifSize.width / Double(frameCount)
         }
         return images
     }
@@ -101,42 +133,42 @@ struct AnimatedSineWaveDemo: View {
 }
 
 struct AnimatedSineWaveOffsetRender: TextRenderer {
-  let timeOffset: Double // 时间偏移量
-  func draw(layout: Text.Layout, in context: inout GraphicsContext) {
-    let count = layout.flattenedRunSlices.count // 统计文本布局中所有 RunSlice 的数量
-    let width = layout.first?.typographicBounds.width ?? 0 // 获取文本 Line 的宽度
-    let height = layout.first?.typographicBounds.rect.height ?? 0 // 获取文本 Line 的高度
-    // 遍历每个 RunSlice 及其索引
-    for (index, slice) in layout.flattenedRunSlices.enumerated() {
-      // 计算当前字符的正弦波偏移量
-      let offset = animatedSineWaveOffset(
-        forCharacterAt: index,
-        amplitude: height / 2, // 振幅设为行高的一半
-        wavelength: width,
-        phaseOffset: timeOffset,
-        totalCharacters: count
-      )
-      // 创建上下文副本并进行平移
-      var copy = context
-      copy.translateBy(x: 0, y: offset)
-      // 在修改后的上下文中绘制当前 RunSlice
-      copy.draw(slice)
+    let timeOffset: Double // 时间偏移量
+    func draw(layout: Text.Layout, in context: inout GraphicsContext) {
+        let count = layout.flattenedRunSlices.count // 统计文本布局中所有 RunSlice 的数量
+        let width = layout.first?.typographicBounds.width ?? 0 // 获取文本 Line 的宽度
+        let height = layout.first?.typographicBounds.rect.height ?? 0 // 获取文本 Line 的高度
+        // 遍历每个 RunSlice 及其索引
+        for (index, slice) in layout.flattenedRunSlices.enumerated() {
+            // 计算当前字符的正弦波偏移量
+            let offset = animatedSineWaveOffset(
+                forCharacterAt: index,
+                amplitude: height / 2, // 振幅设为行高的一半
+                wavelength: width,
+                phaseOffset: timeOffset,
+                totalCharacters: count
+            )
+            // 创建上下文副本并进行平移
+            var copy = context
+            copy.translateBy(x: 0, y: offset)
+            // 在修改后的上下文中绘制当前 RunSlice
+            copy.draw(slice)
+        }
     }
-  }
-
-  // 根据字符索引计算正弦波偏移量
-  func animatedSineWaveOffset(
-    forCharacterAt index: Int,
-    amplitude: Double,
-    wavelength: Double,
-    phaseOffset: Double,
-    totalCharacters: Int
-  ) -> Double {
-    let x = Double(index)
-    let position = (x / Double(totalCharacters)) * wavelength
-    let radians = ((position + phaseOffset) / wavelength) * 2 * .pi
-    return sin(radians) * amplitude
-  }
+    
+    // 根据字符索引计算正弦波偏移量
+    func animatedSineWaveOffset(
+        forCharacterAt index: Int,
+        amplitude: Double,
+        wavelength: Double,
+        phaseOffset: Double,
+        totalCharacters: Int
+    ) -> Double {
+        let x = Double(index)
+        let position = (x / Double(totalCharacters)) * wavelength
+        let radians = ((position + phaseOffset) / wavelength) * 2 * .pi
+        return sin(radians) * amplitude
+    }
 }
 
 extension Text.Layout {
