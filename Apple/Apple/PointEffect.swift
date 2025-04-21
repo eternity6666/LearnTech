@@ -9,6 +9,7 @@ import SwiftUI
 import SpriteKit
 import ImageIO
 import AppKit
+import UniformTypeIdentifiers
 
 struct AnimatedSineWaveDemo: View {
     @State var offset: Double = 0
@@ -29,6 +30,7 @@ struct AnimatedSineWaveDemo: View {
         VStack {
             controlArea
             previewArea
+                .frame(maxHeight: 500)
         }
     }
 
@@ -176,16 +178,21 @@ struct AnimatedSineWaveDemo: View {
     }
 
     private func saveHistoryData() {
-        if let data = try? JSONEncoder().encode(HistoryData(text: self.textStr, color: self.colorList)) {
+        if let data = try? JSONEncoder().encode(
+            HistoryData(
+                text: self.textStr,
+                color: self.colorList,
+                isClear: self.isClear,
+                isGif: self.isGif,
+                bgColor: self.bgColor,
+                size: self.gifSize
+            )
+        ) {
             UserDefaults.standard.set(data, forKey: KEY_GIF_MAKER_HISTORY_DATA)
         }
     }
     
     func saveImage() {
-        let historyData: HistoryData = .init(
-            text: self.textStr,
-            color: self.colorList
-        )
         saveHistoryData()
         guard let downloadPath = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true).first else {
             print("无法获取下载目录")
@@ -205,7 +212,7 @@ struct AnimatedSineWaveDemo: View {
                 let text = String(item)
                 if !text.isEmpty {
                     if (self.isGif) {
-                        let frames = captureFrames(view: gifItem(text: text), frameCount: 30)
+                        let frames = captureFrames(view: gifItem(text: text), frameCount: 10)
                         let fileUrl = url.appendingPathComponent("\(text).gif")
                         createGIF(from: frames, delay: 0.05, outputURL: fileUrl)
                         print("GIF saved at: \(fileUrl)")
@@ -244,30 +251,68 @@ struct AnimatedSineWaveDemo: View {
     }
     
     func createPNG(from image: CGImage, outputURL: URL) {
-        if let destination = CGImageDestinationCreateWithURL(outputURL as CFURL, kUTTypePNG, 1, nil) {
+        if let destination = CGImageDestinationCreateWithURL(
+            outputURL as CFURL,
+            UTType.png.identifier as CFString,
+            1,
+            nil
+        ) {
             CGImageDestinationAddImage(destination, image, nil)
             CGImageDestinationFinalize(destination)
         }
     }
     
     func createGIF(from images: [CGImage], delay: Double, outputURL: URL) {
-        let destination = CGImageDestinationCreateWithURL(outputURL as CFURL, kUTTypeGIF, images.count, nil)!
-        let frameProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay]]
-        let gifProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0]] // 0 = 无限循环
-        
-        CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
-        
-        for cgImage in images {
-            CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
+        if let destination = CGImageDestinationCreateWithURL(
+            outputURL as CFURL,
+            UTType.gif.identifier as CFString,
+            images.count,
+            nil
+        ) {
+            let frameProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay]]
+            let gifProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0]] // 0 = 无限循环
+            
+            CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
+            
+            for cgImage in images {
+                CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
+            }
+            
+            CGImageDestinationFinalize(destination)
         }
-        
-        CGImageDestinationFinalize(destination)
+        if let image = images.first,
+           let url = URL.init(string: outputURL.absoluteString.replacingOccurrences(of: "gif", with: "png")) {
+            createPNG(from: image, outputURL: url)
+        }
     }
 }
 
 struct HistoryData: Codable {
     let text: String
     let color: [Color]
+    let isClear: Bool
+    let isGif: Bool
+    let bgColor: Color
+    let size: CGSize
+
+    init(text: String, color: [Color], isClear: Bool, isGif: Bool, bgColor: Color, size: CGSize) {
+        self.text = text
+        self.color = color
+        self.isClear = isClear
+        self.isGif = isGif
+        self.bgColor = bgColor
+        self.size = size
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.text = try container.decode(String.self, forKey: .text)
+        self.color = try container.decode([Color].self, forKey: .color)
+        self.isClear = (try? container.decode(Bool.self, forKey: .isClear)) ?? true
+        self.isGif = (try? container.decode(Bool.self, forKey: .isGif)) ?? true
+        self.bgColor = (try? container.decode(Color.self, forKey: .bgColor)) ?? .blue
+        self.size = (try? container.decode(CGSize.self, forKey: .size)) ?? .init(width: 240, height: 240)
+    }
 }
 
 struct AnimatedSineWaveOffsetRender: TextRenderer {
