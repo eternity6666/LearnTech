@@ -24,6 +24,7 @@ struct AnimatedSineWaveDemo: View {
     @State var isGif: Bool = true
     @State var isClear: Bool = true
     @State var bgColor: Color = .blue
+    @State var gifCount: Int = 15
     private let KEY_GIF_MAKER_HISTORY_DATA = "KEY_GIF_MAKER_HISTORY_DATA"
 
     var body: some View {
@@ -31,6 +32,9 @@ struct AnimatedSineWaveDemo: View {
             controlArea
             previewArea
                 .frame(maxHeight: 500)
+        }
+        .onAppear {
+            loadHistory()
         }
     }
 
@@ -41,6 +45,7 @@ struct AnimatedSineWaveDemo: View {
                 colorPicker
             }
             styleArea
+                .frame(width: 120)
             VStack {
                 Button {
                     loadHistory()
@@ -53,6 +58,7 @@ struct AnimatedSineWaveDemo: View {
                     Text("output")
                 }
             }
+            .frame(width: 100)
         }
     }
 
@@ -86,6 +92,13 @@ struct AnimatedSineWaveDemo: View {
                 Toggle(isOn: $isGif) {
                 }
             }
+            if isGif {
+                HStack {
+                    Text("gifCount")
+                    TextField(value: self.$gifCount, formatter: NumberFormatter()) {
+                    }
+                }
+            }
             HStack {
                 Text("isClear")
                 Spacer()
@@ -96,36 +109,53 @@ struct AnimatedSineWaveDemo: View {
                 HStack {
                     Text("bgColor")
                     Spacer()
-                    ColorPicker(selection: $bgColor) {
+                    ColorPicker(
+                        selection: $bgColor,
+                        supportsOpacity: !isGif
+                    ) {
                     }
                 }
             }
         }
-        .frame(width: 120)
     }
     
     private var inputArea: some View {
         TextEditor(text: $textStr)
-            .frame(maxWidth: 600, maxHeight: 200)
+            .frame(maxHeight: 200)
+            .frame(maxWidth: .infinity)
             .multilineTextAlignment(.leading)
     }
     
     private var colorPicker: some View {
         HStack {
-            ForEach(self.colorList.indices, id: \.self) { index in
-                ColorPicker(
-                    selection: .init(
-                        get: { self.colorList[index] },
-                        set: { self.colorList[index] = $0 }
-                    )
-                ) {
+            ScrollView(.horizontal) {
+                HStack(spacing: 4) {
+                    ForEach(self.colorList.indices, id: \.self) { index in
+                        ColorPicker(
+                            selection: .init(
+                                get: { self.colorList[index] },
+                                set: { self.colorList[index] = $0 }
+                            )
+                        ) {
+                        }
+                        .overlay(alignment: .leading) {
+                            Button {
+                                self.colorList.remove(at: index)
+                            } label: {
+                                Text("x")
+                            }
+                        }
+                    }
                 }
+                .padding(.horizontal)
             }
+            .scrollIndicators(.hidden)
             Button {
                 self.colorList.append(self.colorList.last ?? .cyan)
             } label: {
                 Text("+")
             }
+            Spacer()
         }
     }
     
@@ -184,6 +214,7 @@ struct AnimatedSineWaveDemo: View {
                 color: self.colorList,
                 isClear: self.isClear,
                 isGif: self.isGif,
+                gifCount: self.gifCount,
                 bgColor: self.bgColor,
                 size: self.gifSize
             )
@@ -292,14 +323,24 @@ struct HistoryData: Codable {
     let color: [Color]
     let isClear: Bool
     let isGif: Bool
+    let gifCount: Int
     let bgColor: Color
     let size: CGSize
 
-    init(text: String, color: [Color], isClear: Bool, isGif: Bool, bgColor: Color, size: CGSize) {
+    init(
+        text: String,
+        color: [Color],
+        isClear: Bool,
+        isGif: Bool,
+        gifCount: Int = 15,
+        bgColor: Color,
+        size: CGSize
+    ) {
         self.text = text
         self.color = color
         self.isClear = isClear
         self.isGif = isGif
+        self.gifCount = gifCount
         self.bgColor = bgColor
         self.size = size
     }
@@ -310,6 +351,7 @@ struct HistoryData: Codable {
         self.color = try container.decode([Color].self, forKey: .color)
         self.isClear = (try? container.decode(Bool.self, forKey: .isClear)) ?? true
         self.isGif = (try? container.decode(Bool.self, forKey: .isGif)) ?? true
+        self.gifCount = (try? container.decode(Int.self, forKey: .gifCount)) ?? 15
         self.bgColor = (try? container.decode(Color.self, forKey: .bgColor)) ?? .blue
         self.size = (try? container.decode(CGSize.self, forKey: .size)) ?? .init(width: 240, height: 240)
     }
