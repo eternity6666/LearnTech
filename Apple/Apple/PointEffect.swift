@@ -38,7 +38,6 @@ struct AnimatedSineWaveDemo: View {
         VStack {
             controlArea
             previewArea
-                .frame(maxHeight: 500)
         }
         .onAppear {
             loadHistory()
@@ -167,17 +166,23 @@ struct AnimatedSineWaveDemo: View {
     }
     
     private var previewArea: some View {
-        HStack {
-            let textList = self.textStr.split { char in
-                ",，、;；".contains(where: { $0 == char })
-            }.prefix(4)
-            ForEach(textList.indices, id: \.self) { index in
-                if index >= 0 && index < textList.endIndex {
-                    let text = String(textList[index])
-                    gifItem(text: text)
-                        .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset, viewWidth: self.gifWidth))
+        ScrollView(.horizontal) {
+            HStack {
+                let widthHeight: CGFloat = 100
+                let textList = self.textStr.split { char in
+                    ",，、;；".contains(where: { $0 == char })
+                }
+                ForEach(textList.indices, id: \.self) { index in
+                    if index >= 0 && index < textList.endIndex {
+                        let text = String(textList[index])
+                        gifItem(text: text)
+                            .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset, viewWidth: self.gifWidth))
+                            .scaleEffect(widthHeight / self.gifWidth)
+                            .frame(width: widthHeight, height: widthHeight)
+                    }
                 }
             }
+            .padding(.horizontal, 16)
         }
         .onReceive(timer) { _ in
             if !self.isGif {
@@ -238,6 +243,11 @@ struct AnimatedSineWaveDemo: View {
            let historyData = try? JSONDecoder().decode(HistoryData.self, from: data) {
             self.textStr = historyData.text
             self.colorList = historyData.color
+            self.isClear = historyData.isClear
+            self.isGif = historyData.isGif
+            self.gifCount = historyData.gifCount
+            self.bgColor = historyData.bgColor
+            self.gifSize = historyData.size
         }
     }
 
@@ -303,7 +313,8 @@ struct AnimatedSineWaveDemo: View {
             let view2 = view
                 .textRenderer(render)
             let renderer = ImageRenderer(content: view2)
-            renderer.scale = 2
+            renderer.scale = 4
+            renderer.proposedSize = .init(self.gifSize)
             if let image = renderer.cgImage {
                 images.append(image)
                 if !isGif {
@@ -334,7 +345,11 @@ struct AnimatedSineWaveDemo: View {
             images.count,
             nil
         ) {
-            let frameProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay]]
+            let frameProperties = [
+                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay],
+                kCGImagePropertyGIFCanvasPixelHeight: self.gifSize.height,
+                kCGImagePropertyGIFCanvasPixelWidth: self.gifSize.width
+            ] as [CFString : Any]
             let gifProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0]] // 0 = 无限循环
             
             CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
@@ -393,7 +408,6 @@ struct AnimatedSineWaveOffsetRender: TextRenderer {
 
     func draw(layout: Text.Layout, in context: inout GraphicsContext) {
         let count = layout.flattenedRunSlices.count // 统计文本布局中所有 RunSlice 的数量
-        let width = layout.first?.typographicBounds.width ?? 0 // 获取文本 Line 的宽度
         let height = layout.first?.typographicBounds.rect.height ?? 0 // 获取文本 Line 的高度
         // 遍历每个 RunSlice 及其索引
         for (index, slice) in layout.flattenedRunSlices.enumerated() {
