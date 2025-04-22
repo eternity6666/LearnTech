@@ -12,6 +12,8 @@ import AppKit
 import UniformTypeIdentifiers
 
 struct AnimatedSineWaveDemo: View {
+    private let KEY_GIF_MAKER_HISTORY_DATA = "KEY_GIF_MAKER_HISTORY_DATA"
+
     @State var offset: Double = 0
     @State var timer = Timer.publish(
         every: 0.05,
@@ -25,7 +27,12 @@ struct AnimatedSineWaveDemo: View {
     @State var isClear: Bool = true
     @State var bgColor: Color = .blue
     @State var gifCount: Int = 15
-    private let KEY_GIF_MAKER_HISTORY_DATA = "KEY_GIF_MAKER_HISTORY_DATA"
+    private var frameCount: Int {
+        gifCount > 0 ? gifCount : 15
+    }
+    private var gifWidth: CGFloat {
+        gifSize.width
+    }
 
     var body: some View {
         VStack {
@@ -168,16 +175,17 @@ struct AnimatedSineWaveDemo: View {
                 if index >= 0 && index < textList.endIndex {
                     let text = String(textList[index])
                     gifItem(text: text)
-                        .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset))
+                        .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset, viewWidth: self.gifWidth))
                 }
             }
         }
         .onReceive(timer) { _ in
             if !self.isGif {
+                self.offset = 0
                 return
             }
-            self.offset += 10
-            if self.offset >= self.gifSize.width {
+            self.offset += self.gifWidth / CGFloat(frameCount)
+            if self.offset > self.gifWidth {
                 self.offset = 0
             }
         }
@@ -187,8 +195,8 @@ struct AnimatedSineWaveDemo: View {
         text: String = "遥遥领先"
     ) -> some View {
         return Text(text)
-            .font(.custom("baotuxiaobaiti", size: gifSize.width / CGFloat(text.count)))
-            .frame(width: gifSize.width, height: gifSize.height)
+            .font(.custom("baotuxiaobaiti", size: floor(self.gifWidth / CGFloat(text.count))))
+            .frame(width: self.gifWidth, height: gifSize.height)
             .foregroundStyle(
                 .linearGradient(
                     colors: self.colorList,
@@ -223,7 +231,7 @@ struct AnimatedSineWaveDemo: View {
         }
     }
     
-    func saveImage() {
+    private func saveImage() {
         saveHistoryData()
         guard let downloadPath = NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true).first else {
             print("无法获取下载目录")
@@ -243,12 +251,12 @@ struct AnimatedSineWaveDemo: View {
                 let text = String(item)
                 if !text.isEmpty {
                     if (self.isGif) {
-                        let frames = captureFrames(view: gifItem(text: text), frameCount: 10)
+                        let frames = captureFrames(view: gifItem(text: text))
                         let fileUrl = url.appendingPathComponent("\(text).gif")
                         createGIF(from: frames, delay: 0.05, outputURL: fileUrl)
                         print("GIF saved at: \(fileUrl)")
                     } else {
-                        if let image = captureFrames(view: gifItem(text: text), frameCount: 30).first {
+                        if let image = captureFrames(view: gifItem(text: text)).first {
                             let fileUrl = url.appendingPathComponent("\(text).png")
                             createPNG(from: image, outputURL: fileUrl)
                             print("PNG saved at: \(fileUrl)")
@@ -261,12 +269,11 @@ struct AnimatedSineWaveDemo: View {
         }
     }
     
-    func captureFrames(view: some View, frameCount: Int) -> [CGImage] {
+    func captureFrames(view: some View) -> [CGImage] {
         var images = [CGImage]()
-        
-        var offset: Double = 0
+        let frameCount = self.frameCount
         for _ in 0 ..< frameCount {
-            let render = AnimatedSineWaveOffsetRender(timeOffset: offset)
+            let render = AnimatedSineWaveOffsetRender(timeOffset: offset, viewWidth: self.gifWidth)
             let view2 = view
                 .textRenderer(render)
             let renderer = ImageRenderer(content: view2)
@@ -310,10 +317,6 @@ struct AnimatedSineWaveDemo: View {
             }
             
             CGImageDestinationFinalize(destination)
-        }
-        if let image = images.first,
-           let url = URL.init(string: outputURL.absoluteString.replacingOccurrences(of: "gif", with: "png")) {
-            createPNG(from: image, outputURL: url)
         }
     }
 }
@@ -359,6 +362,8 @@ struct HistoryData: Codable {
 
 struct AnimatedSineWaveOffsetRender: TextRenderer {
     let timeOffset: Double // 时间偏移量
+    let viewWidth: CGFloat
+
     func draw(layout: Text.Layout, in context: inout GraphicsContext) {
         let count = layout.flattenedRunSlices.count // 统计文本布局中所有 RunSlice 的数量
         let width = layout.first?.typographicBounds.width ?? 0 // 获取文本 Line 的宽度
@@ -369,7 +374,7 @@ struct AnimatedSineWaveOffsetRender: TextRenderer {
             let offset = animatedSineWaveOffset(
                 forCharacterAt: index,
                 amplitude: height / 2, // 振幅设为行高的一半
-                wavelength: width,
+                wavelength: viewWidth,
                 phaseOffset: timeOffset,
                 totalCharacters: count
             )
