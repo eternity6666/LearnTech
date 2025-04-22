@@ -194,17 +194,43 @@ struct AnimatedSineWaveDemo: View {
     private func gifItem(
         text: String = "遥遥领先"
     ) -> some View {
-        return Text(text)
-            .font(.custom("baotuxiaobaiti", size: floor(self.gifWidth / CGFloat(text.count))))
-            .frame(width: self.gifWidth, height: gifSize.height)
-            .foregroundStyle(
-                .linearGradient(
-                    colors: self.colorList,
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+        let textArray = text.map({ String($0) })
+        let size = floor(self.gifWidth / CGFloat(text.count))
+        let textArray1 = Array(textArray.prefix(textArray.count / 2))
+        let textArray2 = Array(textArray.suffix(textArray.count - textArray.count / 2))
+        return Group {
+            if (false) {
+                VStack {
+                    HStack {
+                        ForEach(textArray1.indices, id: \.self) { index in
+                            Text(textArray1[index])
+                        }
+                    }
+                    HStack {
+                        ForEach(textArray2.indices, id: \.self) { index in
+                            Text(textArray2[index])
+                        }
+                    }
+                }
+            } else {
+                Text(text)
+            }
+        }
+        .font(
+            .custom(
+                "baotuxiaobaiti",
+                size: size
             )
-            .background(isClear ? .clear : bgColor)
+        )
+        .frame(width: self.gifWidth, height: gifSize.height)
+        .foregroundStyle(
+            .linearGradient(
+                colors: self.colorList,
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
+        .background(isClear ? .clear : bgColor)
     }
     
     private func loadHistory() {
@@ -277,6 +303,7 @@ struct AnimatedSineWaveDemo: View {
             let view2 = view
                 .textRenderer(render)
             let renderer = ImageRenderer(content: view2)
+            renderer.scale = 2
             if let image = renderer.cgImage {
                 images.append(image)
                 if !isGif {
@@ -382,7 +409,7 @@ struct AnimatedSineWaveOffsetRender: TextRenderer {
             var copy = context
             copy.translateBy(x: 0, y: offset)
             // 在修改后的上下文中绘制当前 RunSlice
-            copy.draw(slice)
+            copy.draw(slice, options: .disablesSubpixelQuantization)
         }
     }
     
