@@ -59,7 +59,9 @@ struct AnimatedSineWaveDemo: View {
                     Text("loadHistory")
                 }
                 Button {
-                    saveImage()
+                    Task {
+                        saveImage()
+                    }
                 } label: {
                     Text("output")
                 }
@@ -175,8 +177,12 @@ struct AnimatedSineWaveDemo: View {
                 ForEach(textList.indices, id: \.self) { index in
                     if index >= 0 && index < textList.endIndex {
                         let text = String(textList[index])
+//                        let textRenderer = AnimatedSineWaveOffsetRender(timeOffset: self.offset, viewWidth: self.gifWidth)
+                        let textRenderer = ScaleRender(
+                            ratio: offsetToRatio(offset: self.offset, max: self.gifWidth)
+                        )
                         gifItem(text: text)
-                            .textRenderer(AnimatedSineWaveOffsetRender(timeOffset: offset, viewWidth: self.gifWidth))
+                            .textRenderer(textRenderer)
                             .scaleEffect(widthHeight / self.gifWidth)
                             .frame(width: widthHeight, height: widthHeight)
                     }
@@ -204,7 +210,7 @@ struct AnimatedSineWaveDemo: View {
         let textArray1 = Array(textArray.prefix(textArray.count / 2))
         let textArray2 = Array(textArray.suffix(textArray.count - textArray.count / 2))
         return Group {
-            if (false) {
+            if (true) {
                 VStack {
                     HStack {
                         ForEach(textArray1.indices, id: \.self) { index in
@@ -308,6 +314,7 @@ struct AnimatedSineWaveDemo: View {
     func captureFrames(view: some View) -> [CGImage] {
         var images = [CGImage]()
         let frameCount = self.frameCount
+        var offset: CGFloat = 0
         for _ in 0 ..< frameCount {
             let render = AnimatedSineWaveOffsetRender(timeOffset: offset, viewWidth: self.gifWidth)
             let view2 = view
@@ -402,6 +409,24 @@ struct HistoryData: Codable {
     }
 }
 
+private func offsetToRatio(offset: CGFloat, max: CGFloat) -> CGFloat {
+//    return sin(offset / max * .pi)
+    return offset / max * 360
+}
+
+struct ScaleRender: TextRenderer {
+    let ratio: CGFloat
+    
+    func draw(layout: Text.Layout, in context: inout GraphicsContext) {
+        for (_, slice) in layout.flattenedRunSlices.enumerated() {
+            context.drawLayer { ctx in
+                ctx.rotate(by: .init(degrees: ratio))
+                ctx.draw(slice)
+            }
+        }
+    }
+}
+
 struct AnimatedSineWaveOffsetRender: TextRenderer {
     let timeOffset: Double // 时间偏移量
     let viewWidth: CGFloat
@@ -423,7 +448,7 @@ struct AnimatedSineWaveOffsetRender: TextRenderer {
             var copy = context
             copy.translateBy(x: 0, y: offset)
             // 在修改后的上下文中绘制当前 RunSlice
-            copy.draw(slice, options: .disablesSubpixelQuantization)
+            copy.draw(slice)
         }
     }
     
