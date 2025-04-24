@@ -31,7 +31,10 @@ struct AnimatedSineWaveDemo: View {
         gifCount > 0 ? gifCount : 15
     }
     private var gifWidth: CGFloat {
-        gifSize.width
+        gifSize.width * 2
+    }
+    private var gifHeight: CGFloat {
+        gifSize.height * 2
     }
 
     var body: some View {
@@ -177,10 +180,10 @@ struct AnimatedSineWaveDemo: View {
                 ForEach(textList.indices, id: \.self) { index in
                     if index >= 0 && index < textList.endIndex {
                         let text = String(textList[index])
-//                        let textRenderer = AnimatedSineWaveOffsetRender(timeOffset: self.offset, viewWidth: self.gifWidth)
-                        let textRenderer = ScaleRender(
-                            ratio: offsetToRatio(offset: self.offset, max: self.gifWidth)
-                        )
+                        let textRenderer = AnimatedSineWaveOffsetRender(timeOffset: self.offset, viewWidth: self.gifWidth)
+//                        let textRenderer = ScaleRender(
+//                            ratio: offsetToRatio(offset: self.offset, max: self.gifWidth)
+//                        )
                         gifItem(text: text)
                             .textRenderer(textRenderer)
                             .scaleEffect(widthHeight / self.gifWidth)
@@ -210,7 +213,7 @@ struct AnimatedSineWaveDemo: View {
         let textArray1 = Array(textArray.prefix(textArray.count / 2))
         let textArray2 = Array(textArray.suffix(textArray.count - textArray.count / 2))
         return Group {
-            if (true) {
+            if (false) {
                 VStack {
                     HStack {
                         ForEach(textArray1.indices, id: \.self) { index in
@@ -233,7 +236,7 @@ struct AnimatedSineWaveDemo: View {
                 size: size
             )
         )
-        .frame(width: self.gifWidth, height: gifSize.height)
+        .frame(width: self.gifWidth, height: self.gifHeight)
         .foregroundStyle(
             .linearGradient(
                 colors: self.colorList,
@@ -320,15 +323,14 @@ struct AnimatedSineWaveDemo: View {
             let view2 = view
                 .textRenderer(render)
             let renderer = ImageRenderer(content: view2)
-            renderer.scale = 4
-            renderer.proposedSize = .init(self.gifSize)
+            renderer.scale = 0.5
             if let image = renderer.cgImage {
                 images.append(image)
                 if !isGif {
                     return images
                 }
             }
-            offset += self.gifSize.width / Double(frameCount)
+            offset += self.gifWidth / Double(frameCount)
         }
         return images
     }
@@ -353,9 +355,7 @@ struct AnimatedSineWaveDemo: View {
             nil
         ) {
             let frameProperties = [
-                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay],
-                kCGImagePropertyGIFCanvasPixelHeight: self.gifSize.height,
-                kCGImagePropertyGIFCanvasPixelWidth: self.gifSize.width
+                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay]
             ] as [CFString : Any]
             let gifProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0]] // 0 = 无限循环
             
