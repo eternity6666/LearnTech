@@ -8,6 +8,12 @@
 import SwiftUI
 
 extension Font {
-//    static let baoTuXiaoBaiTi: Design =
-//        .custom("baotuXi", size: <#T##CGFloat#>)
+    static func baoTuXiaoBaiTi(_ size: CGFloat = 24) -> Font {
+        return .custom("baotuxiaobaiti", size: size)
+    }
+
+    static func liuHuanKatongShoushu(_ size: CGFloat = 24) -> Font {
+        return .custom("LiuhuanKatongShoushu", size: size)
+    }
+
 }

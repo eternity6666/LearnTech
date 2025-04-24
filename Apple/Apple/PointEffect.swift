@@ -357,7 +357,11 @@ struct AnimatedSineWaveDemo: View {
             let frameProperties = [
                 kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay]
             ] as [CFString : Any]
-            let gifProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0]] // 0 = 无限循环
+            let gifProperties = [
+                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0], // 0 = 无限循环
+                kCGImagePropertyGIFCanvasPixelHeight: self.gifSize.height,
+                kCGImagePropertyGIFCanvasPixelWidth: self.gifSize.width
+            ] as [CFString : Any]
             
             CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
             
