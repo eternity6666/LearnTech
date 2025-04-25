@@ -230,12 +230,7 @@ struct AnimatedSineWaveDemo: View {
                 Text(text)
             }
         }
-        .font(
-            .custom(
-                "baotuxiaobaiti",
-                size: size
-            )
-        )
+        .font(.pomo(size))
         .frame(width: self.gifWidth, height: self.gifHeight)
         .foregroundStyle(
             .linearGradient(

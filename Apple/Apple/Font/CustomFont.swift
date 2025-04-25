@@ -16,4 +16,7 @@ extension Font {
         return .custom("LiuhuanKatongShoushu", size: size)
     }
 
+    static func pomo(_ size: CGFloat = 24) -> Font {
+        return .custom("pomo", size: size)
+    }
 }

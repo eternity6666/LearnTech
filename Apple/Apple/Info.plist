@@ -6,8 +6,19 @@
 	<string></string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>包图小白体.ttf</string>
-		<string>今年也要加油鸭.ttf</string>
+        <string>包图小白体.ttf</string>
+        <string>今年也要加油鸭.ttf</string>
+        <string>可爱少女体.otf
+        <string>刘欢卡通手书2.0.ttf</string>
+        <string>三极力量体简-粗.ttf</string>
+        <string>三极泼墨体.ttf</string>
+        <string>优设标题黑.ttf</string>
+        <string>宅在家粉條甜.ttf</string>
+        <string>AlimamaDaoLiTi.ttf</string>
+        <string>Mengshen-Handwritten.ttf</string>
+        <string>QianTuXiaoTuTi-2.ttf</string>
+        <string>Silver.ttf</string>
+        <string>WD-XLLubrifont.ttc</string>
 	</array>
 </dict>
 </plist>
