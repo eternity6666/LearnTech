@@ -253,11 +253,13 @@ struct TopBottomView: View {
     }
 
     var body: some View {
-            VStack(spacing: 8) {
+            VStack(spacing: 0) {
                 Text(text.0)
                 Text(text.1)
                     .padding()
                     .padding(.all, 0.5)
+                    .frame(maxHeight: size.height * 0.4)
+                    .frame(width: size.width * 0.8)
                     .background {
                         bottomBg()
                     }
