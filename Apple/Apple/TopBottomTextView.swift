@@ -112,8 +112,48 @@ struct TopBottomTextView: View {
     }
 
     @ViewBuilder
+    private func InputNumber(
+        value: Binding<FloatingPointFormatStyle<Double>.FormatInput>,
+        text: String
+    ) -> some View {
+        HStack {
+            Text(text)
+            TextField(value: value, format: .number) {
+                
+            }
+        }
+    }
+    
+    @ViewBuilder
     private func ControlArea() -> some View {
         HStack {
+            VStack {
+                ColorPicker(selection: self.$viewModel.color) {
+                    Text("颜色")
+                }
+                InputNumber(
+                    value: .init(
+                        get: { viewModel.size.width },
+                        set: { viewModel.size.width = $0 }
+                    ),
+                    text: "width"
+                )
+                InputNumber(
+                    value: .init(
+                        get: { viewModel.size.height },
+                        set: { viewModel.size.height = $0 }
+                    ),
+                    text: "height"
+                )
+            }
+            .frame(width: 100)
+            TextEditor(text: self.$viewModel.inputText)
+                .frame(maxHeight: 200)
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.leading)
+                .overlay(alignment: .bottomTrailing) {
+                    Text("个数: \(self.viewModel.textArray.count)")
+                }
             Button {
                 self.viewModel.output()
             } label: {
