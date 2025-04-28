@@ -11,17 +11,23 @@ struct PrintTextView: View {
     private let text = "遥遥领先"
     @State
     private var ratio: CGFloat = 0
+    @State
+    private var timer = Timer.publish(
+        every: 0.01,
+        on: .main,
+        in: .common
+    ).autoconnect()
 
     var body: some View {
         itemView(ratio: ratio)
-            .onAppear {
-                withAnimation(
-                    .linear(duration: 1).repeatForever(autoreverses: false)
-                ) {
-                    self.ratio = 1.0
+            .onReceive(timer) { _ in
+                ratio += 0.005
+                if ratio >= 1 {
+                    ratio = 0
                 }
             }
     }
+
     private var textList: [[String]] {
         let textList = text.map { String($0) }
         return stride(from: 0, to: textList.count, by: 2).map {
@@ -30,7 +36,7 @@ struct PrintTextView: View {
     }
     
     private func convert(_ ratio: CGFloat) -> Double {
-        return (ratio < 0.5 ? 0.25 - ratio : ratio - 0.75) * 180.0
+        return ratio * 360.0
     }
 
     @ViewBuilder
@@ -49,7 +55,7 @@ struct PrintTextView: View {
                             .rotationEffect(.degrees(convert(ratio)))
                     }
                 }
-                .font(.liuHuanKatongShoushu(size.width / 2))
+                .font(.pomo(size.width / 2))
             }
         }
         .padding(.all, 8)

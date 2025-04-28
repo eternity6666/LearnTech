@@ -291,10 +291,19 @@ struct AnimatedSineWaveDemo: View {
                 let text = String(item)
                 if !text.isEmpty {
                     if (self.isGif) {
-                        let frames = captureFrames(view: gifItem(text: text))
                         let fileUrl = url.appendingPathComponent("\(text).gif")
-                        createGIF(from: frames, delay: 0.05, outputURL: fileUrl)
-                        print("GIF saved at: \(fileUrl)")
+                        let _ = OutputImg.outputGif(
+                            config: .init(
+                                frameCount: frameCount,
+                                width: self.gifWidth,
+                                delayTime: 0.1,
+                                outputPath: fileUrl
+                            )
+                        ) { ratio in
+                            let render = AnimatedSineWaveOffsetRender(timeOffset: ratio, viewWidth: self.gifWidth)
+                            return gifItem(text: text)
+                                .textRenderer(render)
+                        }
                     } else {
                         if let image = captureFrames(view: gifItem(text: text)).first {
                             let fileUrl = url.appendingPathComponent("\(text).png")
@@ -338,32 +347,6 @@ struct AnimatedSineWaveDemo: View {
             nil
         ) {
             CGImageDestinationAddImage(destination, image, nil)
-            CGImageDestinationFinalize(destination)
-        }
-    }
-    
-    func createGIF(from images: [CGImage], delay: Double, outputURL: URL) {
-        if let destination = CGImageDestinationCreateWithURL(
-            outputURL as CFURL,
-            UTType.gif.identifier as CFString,
-            images.count,
-            nil
-        ) {
-            let frameProperties = [
-                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay]
-            ] as [CFString : Any]
-            let gifProperties = [
-                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0], // 0 = 无限循环
-                kCGImagePropertyGIFCanvasPixelHeight: self.gifSize.height,
-                kCGImagePropertyGIFCanvasPixelWidth: self.gifSize.width
-            ] as [CFString : Any]
-            
-            CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
-            
-            for cgImage in images {
-                CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
-            }
-            
             CGImageDestinationFinalize(destination)
         }
     }
