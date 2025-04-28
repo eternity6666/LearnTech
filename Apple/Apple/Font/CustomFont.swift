@@ -19,4 +19,8 @@ extension Font {
     static func pomo(_ size: CGFloat = 24) -> Font {
         return .custom("pomo", size: size)
     }
+
+    static func youSheBiaoTiHei(_ size: CGFloat = 24) -> Font {
+        return .custom("YouSheBiaoTiHei", size: size)
+    }
 }

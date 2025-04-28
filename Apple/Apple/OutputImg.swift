@@ -26,6 +26,17 @@ struct OutputImg {
         return createGIF(from: gifFrames, delay: config.delayTime, outputURL: config.outputPath)
     }
 
+    static func outputPNG(
+        url: URL,
+        view: () -> some View
+    ) -> Bool {
+        let renderer = ImageRenderer(content: view())
+        if let image = renderer.cgImage {
+            return createPNG(from: image, outputURL: url)
+        }
+        return false
+    }
+
     static func captureGIFFrames(
         frameCount: Int,
         width: CGFloat,
@@ -69,6 +80,20 @@ struct OutputImg {
                 CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
             }
             
+            CGImageDestinationFinalize(destination)
+            return true
+        }
+        return false
+    }
+
+    static func createPNG(from image: CGImage, outputURL: URL) -> Bool {
+        if let destination = CGImageDestinationCreateWithURL(
+            outputURL as CFURL,
+            UTType.png.identifier as CFString,
+            1,
+            nil
+        ) {
+            CGImageDestinationAddImage(destination, image, nil)
             CGImageDestinationFinalize(destination)
             return true
         }
