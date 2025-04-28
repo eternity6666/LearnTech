@@ -18,7 +18,6 @@ struct OutputImg {
         let outputPath: URL
     }
     
-    
     static func outputGif(
         config: GifConfig,
         view: (CGFloat) -> some View
@@ -34,10 +33,10 @@ struct OutputImg {
     ) -> [CGImage] {
         var images = [CGImage]()
         var offset: CGFloat = 0
-        var diffOffset = width / Double(frameCount)
+        let diffOffset = 1.0 / Double(frameCount)
         for _ in 0 ..< frameCount {
+            print(offset)
             let renderer = ImageRenderer(content: view(offset))
-            renderer.scale = 0.5
             if let image = renderer.cgImage {
                 images.append(image)
             }
@@ -71,7 +70,6 @@ struct OutputImg {
             }
             
             CGImageDestinationFinalize(destination)
-            print("GIF saved at: \(outputURL)")
             return true
         }
         return false

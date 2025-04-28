@@ -13,6 +13,14 @@ class TopBottomViewModel {
     var frameCount = 30
     var time: CGFloat = 1
     var color: Color = .green
+    var inputText: String = "老奶奶穿棉袄,一套又一套;" {
+        didSet {
+            updateTextArray()
+        }
+    }
+    var size: CGSize = .init(width: 240, height: 240)
+
+    var textArray: [(String, String)] = []
 
     init() {
         Task {
@@ -26,6 +34,62 @@ class TopBottomViewModel {
                 try? await Task.sleep(for: .milliseconds(Int(fTimeSleep)))
             }
         }
+        self.updateTextArray()
+    }
+
+    private func dirUrl(
+        folderName: String = "\(Int(Date.now.timeIntervalSince1970))"
+    ) -> URL? {
+        guard let downloadPath = NSSearchPathForDirectoriesInDomains(
+            .downloadsDirectory,
+            .userDomainMask, true
+        ).first else {
+            print("无法获取下载目录")
+            return nil
+        }
+        let url = URL(fileURLWithPath: downloadPath).appendingPathComponent(folderName)
+        do {
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+            return url
+        } catch {
+            return nil
+        }
+    }
+    
+    @MainActor
+    func output() {
+        if let url = dirUrl() {
+            textArray.forEach { (top, bottom) in
+                let fileUrl = url.appendingPathComponent("\(top).gif")
+                let isSuccess = OutputImg.outputGif(
+                    config: .init(
+                        frameCount: self.frameCount,
+                        width: self.size.width,
+                        delayTime: 0.05,
+                        outputPath: fileUrl
+                    )
+                ) { ratio in
+                    TopBottomView(
+                        text: (top, bottom),
+                        ratio: ratio,
+                        color: self.color
+                    )
+                }
+                print("isSuccess=\(isSuccess), file=\(fileUrl.absoluteString)")
+            }
+        }
+    }
+
+    private func updateTextArray() {
+        let array = inputText.split(separator: ";")
+        var result: [(String, String)] = []
+        array.forEach { item in
+            let tmp = item.split(separator: ",")
+            if tmp.count >= 2 {
+                result.append((String(tmp[0]), String(tmp[1])))
+            }
+        }
+        textArray = result
     }
 }
 
@@ -35,10 +99,44 @@ struct TopBottomTextView: View {
 
     var body: some View {
         VStack {
-            TopBottomView(
-                ratio: viewModel.ratio,
-                color: viewModel.color
-            )
+            ControlArea()
+            VStack(spacing: 0) {
+                PreviewArea()
+                    .colorScheme(.light)
+                    .background(.white)
+                PreviewArea()
+                    .colorScheme(.dark)
+                    .background(.black)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func ControlArea() -> some View {
+        HStack {
+            Button {
+                self.viewModel.output()
+            } label: {
+                Text("导出")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func PreviewArea() -> some View {
+        let array = viewModel.textArray
+        HStack {
+            ForEach(array.indices, id: \.self) { index in
+                TopBottomView(
+                    text: array[index],
+                    ratio: viewModel.ratio,
+                    color: viewModel.color,
+                    size: viewModel.size
+                )
+                .scaleEffect(100 / viewModel.size.width)
+                .frame(width: 100, height: 100)
+            }
+            Spacer()
         }
     }
 }
@@ -64,9 +162,7 @@ struct TopBottomView: View {
     var body: some View {
             VStack(spacing: 8) {
                 Text(text.0)
-                    .shadow(color: color, radius: toShadowRadius())
                 Text(text.1)
-                    .shadow(color: color, radius: toShadowRadius())
                     .padding()
                     .padding(.all, 0.5)
                     .background {
@@ -90,17 +186,13 @@ struct TopBottomView: View {
                     .fill(
                         .linearGradient(
                             colors: [
-                                color.opacity(0),
-                                color.opacity(0.7),
-                                color.opacity(0.8),
-                                color.opacity(0.7),
-                                color.opacity(0),
+                                color
                             ],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
-                    .frame(width: 66, height: 800)
+                    .frame(width: 30, height: 800)
                     .rotationEffect(.degrees(toBottomBgRotation()))
             }
     }
@@ -112,21 +204,10 @@ struct TopBottomView: View {
     private func toBottomBgRotation() -> CGFloat {
         return ratio * 180
     }
-
 }
 
 #Preview {
     VStack(spacing: 0) {
         TopBottomTextView()
-            .border(.blue, width: 2)
-            .padding()
-            .colorScheme(.light)
-            .background(.white)
-
-        TopBottomTextView()
-            .border(.blue, width: 2)
-            .padding()
-            .colorScheme(.dark)
-            .background(.black)
     }
 }
