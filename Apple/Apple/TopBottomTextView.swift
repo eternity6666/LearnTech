@@ -120,10 +120,14 @@ class TopBottomViewModel {
     }
     
     private func updateTextArray() {
-        let array = inputText.split(separator: ";")
+        let array = inputText.split { char in
+            ";；".contains(where: { char == $0})
+        }
         var result: [(String, String)] = []
         array.forEach { item in
-            let tmp = item.split(separator: ",")
+            let tmp = item.split { char in
+                ",".contains(where: { char == $0})
+            }
             if tmp.count >= 2 {
                 result.append((String(tmp[0]), String(tmp[1])))
             }
