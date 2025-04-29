@@ -1,0 +1,15 @@
+{
+  "originHash" : "ee6ebe9829c84d3dd33813a649e769d1a8345fe48c817cff7a9580a43e61c014",
+  "pins" : [
+    {
+      "identity" : "swiftcommon",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eternity6666/SwiftCommon",
+      "state" : {
+        "revision" : "496b555931dc01d8ed294f63b989854f2d7d39df",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

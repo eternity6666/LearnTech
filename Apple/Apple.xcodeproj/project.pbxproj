@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2B4931B32DC0ADC7009418FE /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B4931B22DC0ADC7009418FE /* SwiftCommon */; };
+		2B4931B62DC0B202009418FE /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B4931B52DC0B202009418FE /* SwiftCommon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		2B53A6A92DB229C000CA83E2 /* Apple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Apple.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B4931B32DC0ADC7009418FE /* SwiftCommon in Frameworks */,
+				2B4931B62DC0B202009418FE /* SwiftCommon in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +85,8 @@
 			);
 			name = Apple;
 			packageProductDependencies = (
+				2B4931B22DC0ADC7009418FE /* SwiftCommon */,
+				2B4931B52DC0B202009418FE /* SwiftCommon */,
 			);
 			productName = Apple;
 			productReference = 2B53A6A92DB229C000CA83E2 /* Apple.app */;
@@ -107,6 +116,9 @@
 			);
 			mainGroup = 2B53A6A02DB229C000CA83E2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2B4931B42DC0B202009418FE /* XCRemoteSwiftPackageReference "SwiftCommon" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2B53A6AA2DB229C000CA83E2 /* Products */;
 			projectDirPath = "";
@@ -356,6 +368,29 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2B4931B42DC0B202009418FE /* XCRemoteSwiftPackageReference "SwiftCommon" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/eternity6666/SwiftCommon";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2B4931B22DC0ADC7009418FE /* SwiftCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftCommon;
+		};
+		2B4931B52DC0B202009418FE /* SwiftCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2B4931B42DC0B202009418FE /* XCRemoteSwiftPackageReference "SwiftCommon" */;
+			productName = SwiftCommon;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2B53A6A12DB229C000CA83E2 /* Project object */;
 }

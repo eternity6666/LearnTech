@@ -10,6 +10,7 @@ import SpriteKit
 import ImageIO
 import AppKit
 import UniformTypeIdentifiers
+import SwiftCommon
 
 struct AnimatedSineWaveDemo: View {
     private let KEY_GIF_MAKER_HISTORY_DATA = "KEY_GIF_MAKER_HISTORY_DATA"
