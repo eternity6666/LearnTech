@@ -23,6 +23,12 @@ struct OutputImg {
         view: (CGFloat) -> some View
     ) -> Bool {
         let gifFrames = captureGIFFrames(frameCount: config.frameCount, width: config.width, view: view)
+        gifFrames.enumerated().forEach { (index, image) in
+            let path = config.outputPath.absoluteString.replacing(".gif", with: "_\(index).png", maxReplacements: 1)
+            if let url = URL.init(string: path) {
+                let _ = createPNG(from: image, outputURL: url)
+            }
+        }
         return createGIF(from: gifFrames, delay: config.delayTime, outputURL: config.outputPath)
     }
 
@@ -48,6 +54,7 @@ struct OutputImg {
         for _ in 0 ..< frameCount {
             print(offset)
             let renderer = ImageRenderer(content: view(offset))
+            renderer.scale = 4
             if let image = renderer.cgImage {
                 images.append(image)
             }
@@ -67,19 +74,20 @@ struct OutputImg {
             images.count,
             nil
         ) {
-            let frameProperties = [
-                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay]
-            ] as [CFString : Any]
             let gifProperties = [
-                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0] // 0 = 无限循环
+                kCGImagePropertyGIFDictionary: [
+                    kCGImagePropertyGIFLoopCount: 0,
+                    kCGImagePropertyGIFDelayTime: delay,
+                    kCGImagePropertyGIFHasGlobalColorMap: true
+                ] // 0 = 无限循环
             ] as [CFString : Any]
-            
-            CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
-            
+
             for cgImage in images {
-                CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
+                CGImageDestinationAddImage(destination, cgImage, nil)
             }
-            
+
+            CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
+
             CGImageDestinationFinalize(destination)
             return true
         }
