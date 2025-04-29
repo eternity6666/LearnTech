@@ -23,12 +23,12 @@ struct OutputImg {
         view: (CGFloat) -> some View
     ) -> Bool {
         let gifFrames = captureGIFFrames(frameCount: config.frameCount, width: config.width, view: view)
-        gifFrames.enumerated().forEach { (index, image) in
-            let path = config.outputPath.absoluteString.replacing(".gif", with: "_\(index).png", maxReplacements: 1)
-            if let url = URL.init(string: path) {
-                let _ = createPNG(from: image, outputURL: url)
-            }
-        }
+//        gifFrames.enumerated().forEach { (index, image) in
+//            let path = config.outputPath.absoluteString.replacing(".gif", with: "_\(index).png", maxReplacements: 1)
+//            if let url = URL.init(string: path) {
+//                let _ = createPNG(from: image, outputURL: url)
+//            }
+//        }
         return createGIF(from: gifFrames, delay: config.delayTime, outputURL: config.outputPath)
     }
 
