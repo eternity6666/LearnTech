@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B127C8E2DC125EB00A770E0 /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B127C8D2DC125EB00A770E0 /* SwiftCommon */; };
 		2B4931B32DC0ADC7009418FE /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B4931B22DC0ADC7009418FE /* SwiftCommon */; };
-		2B4931B62DC0B202009418FE /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B4931B52DC0B202009418FE /* SwiftCommon */; };
+		2B6DB7FD2DC13AE500D7768F /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B6DB7FC2DC13AE500D7768F /* SwiftCommon */; };
+		2B6DB8012DC146E300D7768F /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B6DB8002DC146E300D7768F /* SwiftCommon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,7 +44,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B4931B32DC0ADC7009418FE /* SwiftCommon in Frameworks */,
-				2B4931B62DC0B202009418FE /* SwiftCommon in Frameworks */,
+				2B6DB8012DC146E300D7768F /* SwiftCommon in Frameworks */,
+				2B6DB7FD2DC13AE500D7768F /* SwiftCommon in Frameworks */,
+				2B127C8E2DC125EB00A770E0 /* SwiftCommon in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,7 +90,9 @@
 			name = Apple;
 			packageProductDependencies = (
 				2B4931B22DC0ADC7009418FE /* SwiftCommon */,
-				2B4931B52DC0B202009418FE /* SwiftCommon */,
+				2B127C8D2DC125EB00A770E0 /* SwiftCommon */,
+				2B6DB7FC2DC13AE500D7768F /* SwiftCommon */,
+				2B6DB8002DC146E300D7768F /* SwiftCommon */,
 			);
 			productName = Apple;
 			productReference = 2B53A6A92DB229C000CA83E2 /* Apple.app */;
@@ -117,7 +123,7 @@
 			mainGroup = 2B53A6A02DB229C000CA83E2;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2B4931B42DC0B202009418FE /* XCRemoteSwiftPackageReference "SwiftCommon" */,
+				2B6DB7FF2DC146E300D7768F /* XCRemoteSwiftPackageReference "SwiftCommon" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2B53A6AA2DB229C000CA83E2 /* Products */;
@@ -370,24 +376,32 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2B4931B42DC0B202009418FE /* XCRemoteSwiftPackageReference "SwiftCommon" */ = {
+		2B6DB7FF2DC146E300D7768F /* XCRemoteSwiftPackageReference "SwiftCommon" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/eternity6666/SwiftCommon";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.0.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2B127C8D2DC125EB00A770E0 /* SwiftCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftCommon;
+		};
 		2B4931B22DC0ADC7009418FE /* SwiftCommon */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftCommon;
 		};
-		2B4931B52DC0B202009418FE /* SwiftCommon */ = {
+		2B6DB7FC2DC13AE500D7768F /* SwiftCommon */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2B4931B42DC0B202009418FE /* XCRemoteSwiftPackageReference "SwiftCommon" */;
+			productName = SwiftCommon;
+		};
+		2B6DB8002DC146E300D7768F /* SwiftCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2B6DB7FF2DC146E300D7768F /* XCRemoteSwiftPackageReference "SwiftCommon" */;
 			productName = SwiftCommon;
 		};
 /* End XCSwiftPackageProductDependency section */

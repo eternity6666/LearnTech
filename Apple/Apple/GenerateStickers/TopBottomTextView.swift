@@ -6,12 +6,7 @@
 //
 
 import SwiftUI
-
-private extension Font {
-    static func font(_ size: CGFloat) -> Font {
-        .youSheBiaoTiHei(size)
-    }
-}
+import SwiftCommon
 
 @Observable
 class TopBottomViewModel {
@@ -27,7 +22,7 @@ class TopBottomViewModel {
         }
     }
     var size: CGSize = .init(width: 240, height: 240)
-
+    var fontType: FontType = .baoTuXiaoBaiTi
     var textArray: [(String, String)] = []
 
     init() {
@@ -62,6 +57,10 @@ class TopBottomViewModel {
             return nil
         }
     }
+
+    func font(_ size: CGFloat) -> Font {
+        return self.fontType.font(size)
+    }
     
     @MainActor
     func output() {
@@ -77,7 +76,7 @@ class TopBottomViewModel {
     @MainActor
     private func outputStickers(_ url: URL) {
         textArray.forEach { (top, bottom) in
-            let fileUrl = url.appendingPathComponent("\(top).gif")
+            let fileUrl = url.appendingPathComponent("\(top)_\(bottom).gif")
             let isSuccess = OutputImg.outputGif(
                 config: .init(
                     frameCount: self.frameCount,
@@ -90,7 +89,8 @@ class TopBottomViewModel {
                     text: (top, bottom),
                     ratio: ratio,
                     color: self.color,
-                    size: self.size
+                    size: self.size,
+                    font: self.font(_:)
                 )
             }
             print("isSuccess=\(isSuccess), file=\(fileUrl.absoluteString)")
@@ -112,7 +112,7 @@ class TopBottomViewModel {
             .padding()
             .lineLimit(1)
             .minimumScaleFactor(0.01)
-            .font(.font(max(size.width, size.height)))
+            .font(self.fontType.font(max(size.width, size.height)))
             .frame(width: size.width, height: size.height)
             .background(color.opacity(0.2))
         }
@@ -175,6 +175,16 @@ struct TopBottomTextView: View {
                 ColorPicker(selection: self.$viewModel.color) {
                     Text("颜色")
                 }
+                Picker(selection: self.$viewModel.fontType) {
+                    ForEach(FontType.allCases) { fontType in
+                        Text(fontType.rawValue)
+                            .tag(fontType)
+                            .font(fontType.font(14))
+                    }
+                } label: {
+                    Text("Font")
+                }
+
                 InputNumber(
                     value: .init(
                         get: { viewModel.size.width },
@@ -224,7 +234,8 @@ struct TopBottomTextView: View {
                         text: array[index],
                         ratio: viewModel.ratio,
                         color: viewModel.color,
-                        size: viewModel.size
+                        size: viewModel.size,
+                        font: viewModel.font(_:)
                     )
                     .scaleEffect(100 / viewModel.size.width)
                     .frame(width: 100, height: 100)
@@ -239,37 +250,40 @@ struct TopBottomView: View {
     let ratio: CGFloat
     let color: Color
     let size: CGSize
+    let font: (CGFloat) -> Font
 
     init(
         text: (String, String) = ("老奶奶穿棉袄", "一套又一套"),
         ratio: CGFloat,
         color: Color,
-        size: CGSize = .init(width: 240, height: 240)
+        size: CGSize = .init(width: 240, height: 240),
+        font: @escaping (CGFloat) -> Font = { .baoTuXiaoBaiTi($0) }
     ) {
         self.text = text
         self.ratio = ratio
         self.color = color
         self.size = size
+        self.font = font
     }
 
     var body: some View {
-            VStack(spacing: 0) {
-                Text(text.0)
-                Text(text.1)
-                    .padding()
-                    .padding(.all, 0.5)
-                    .frame(maxHeight: size.height * 0.4)
-                    .frame(width: size.width * 0.8)
-                    .background {
-                        bottomBg()
-                    }
-            }
-            .foregroundStyle(color)
-            .padding()
-            .lineLimit(1)
-            .minimumScaleFactor(0.01)
-            .font(.font(max(size.width, size.height)))
-            .frame(width: size.width, height: size.height)
+        VStack(spacing: 0) {
+            Text(text.0)
+            Text(text.1)
+                .padding()
+                .padding(.all, 0.5)
+                .frame(maxHeight: size.height * 0.4)
+                .frame(width: size.width * 0.8)
+                .background {
+                    bottomBg()
+                }
+        }
+        .foregroundStyle(color)
+        .padding()
+        .lineLimit(1)
+        .minimumScaleFactor(0.01)
+        .font(self.font(max(size.width, size.height)))
+        .frame(width: size.width, height: size.height)
     }
     
     @ViewBuilder

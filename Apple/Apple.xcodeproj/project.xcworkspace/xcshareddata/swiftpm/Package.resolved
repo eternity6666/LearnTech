@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/eternity6666/SwiftCommon",
       "state" : {
-        "revision" : "496b555931dc01d8ed294f63b989854f2d7d39df",
-        "version" : "1.0.0"
+        "revision" : "164e1e0852986da781cd301e06ef9920d25fd993",
+        "version" : "1.0.2"
       }
     }
   ],
