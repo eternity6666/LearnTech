@@ -381,7 +381,7 @@
 			repositoryURL = "https://github.com/eternity6666/SwiftCommon";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
+				minimumVersion = 1.0.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
