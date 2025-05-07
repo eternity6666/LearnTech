@@ -83,7 +83,7 @@ struct OutputImg {
             ] as [CFString : Any]
 
             for cgImage in images {
-                CGImageDestinationAddImage(destination, cgImage, nil)
+                CGImageDestinationAddImage(destination, cgImage, gifProperties as CFDictionary)
             }
 
             CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
