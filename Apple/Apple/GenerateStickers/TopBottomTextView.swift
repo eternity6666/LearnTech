@@ -252,6 +252,18 @@ struct TopBottomView: View {
     let size: CGSize
     let font: (CGFloat) -> Font
 
+    private var fontSize: CGFloat {
+        max(
+            self.size.width,
+            self.size.height
+        ) / CGFloat(
+            max(
+                self.text.0.count,
+                self.text.1.count
+            )
+        )
+    }
+
     init(
         text: (String, String) = ("老奶奶穿棉袄", "一套又一套"),
         ratio: CGFloat,
@@ -272,7 +284,7 @@ struct TopBottomView: View {
             Text(text.1)
                 .padding()
                 .padding(.all, 0.5)
-                .frame(maxHeight: size.height * 0.4)
+//                .frame(maxHeight: size.height * 0.4)
                 .frame(width: size.width * 0.8)
                 .background {
                     bottomBg()

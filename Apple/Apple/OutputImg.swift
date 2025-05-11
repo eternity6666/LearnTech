@@ -74,19 +74,18 @@ struct OutputImg {
             images.count,
             nil
         ) {
+            let frameProperties = [
+                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: delay]
+            ] as [CFString : Any]
             let gifProperties = [
-                kCGImagePropertyGIFDictionary: [
-                    kCGImagePropertyGIFLoopCount: 0,
-                    kCGImagePropertyGIFDelayTime: delay,
-                    kCGImagePropertyGIFHasGlobalColorMap: true
-                ] // 0 = 无限循环
+                kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0], // 0 = 无限循环
             ] as [CFString : Any]
 
-            for cgImage in images {
-                CGImageDestinationAddImage(destination, cgImage, gifProperties as CFDictionary)
-            }
-
             CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
+
+            for cgImage in images {
+                CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
+            }
 
             CGImageDestinationFinalize(destination)
             return true
