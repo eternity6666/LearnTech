@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -10,14 +9,25 @@ plugins {
     alias(libs.plugins.composeHotReload)
 }
 
+compose.desktop {
+    application {
+        mainClass = "com.yzh.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.yzh"
+            packageVersion = "1.0.0"
+        }
+    }
+}
+
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -28,12 +38,12 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm("desktop")
     
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -89,16 +99,4 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-}
-
-compose.desktop {
-    application {
-        mainClass = "com.yzh.MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.yzh"
-            packageVersion = "1.0.0"
-        }
-    }
 }
