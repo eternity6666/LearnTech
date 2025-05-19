@@ -32,8 +32,9 @@ androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 io-ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 io-ktor-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
-io-ktor-contentNegotiation= { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
-io-ktor-serialization-json= { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+io-ktor-contentNegotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+io-ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+network-chaintech-qrkit = { group = "network.chaintech", name = "qr-kit", version = "3.0.6" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
