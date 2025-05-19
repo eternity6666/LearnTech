@@ -32,6 +32,8 @@ androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 io-ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 io-ktor-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+io-ktor-contentNegotiation= { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+io-ktor-serialization-json= { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -40,3 +42,4 @@ composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "com
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialzation = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

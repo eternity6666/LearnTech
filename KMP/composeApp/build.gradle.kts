@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinSerialzation)
 }
 
 compose.desktop {
@@ -59,6 +60,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.io.ktor.core)
             implementation(libs.io.ktor.cio)
+            implementation(libs.io.ktor.contentNegotiation)
+            implementation(libs.io.ktor.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

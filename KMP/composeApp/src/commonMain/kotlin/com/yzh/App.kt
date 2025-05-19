@@ -10,26 +10,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.yzh.wechat.sticker.WeChatSticker
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        val viewModel = remember { StickerViewModel() }
-        val text = viewModel.text.collectAsState("")
-        Column {
-            TextField(
-                value = text.value,
-                onValueChange = {
-                    viewModel.update(StickerViewModel.Action.InputText(it))
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
+        WeChatSticker()
+    }
+}
+
+@Composable
+fun StickerMaker() {
+    val viewModel = remember { StickerViewModel() }
+    val text = viewModel.text.collectAsState("")
+    Column {
+        TextField(
+            value = text.value,
+            onValueChange = {
+                viewModel.update(StickerViewModel.Action.InputText(it))
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
 //                ColorPicker(
 //                    color,
 //                    onValueChange = { color = it }
@@ -38,7 +45,6 @@ fun App() {
 //                    color,
 //                    onValueChange = { color = it }
 //                )
-            }
         }
     }
 }
