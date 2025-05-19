@@ -7,16 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil3.compose.AsyncImage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,8 +22,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.Serializable
 import qrgenerator.QRCodeImage
-import kotlin.coroutines.Continuation
-import kotlin.time.Duration
 
 class WeChatStickerViewModel : ViewModel() {
     private val httpClient = HttpClient {
@@ -63,9 +59,13 @@ class WeChatStickerViewModel : ViewModel() {
                     )
                     val data = resp.body<WeChatStickerResp<CheckQrTicketForLogin>>().data
                     println(data)
-                    data.takeIf { it.qrStatus == 3 }?.loginInfo?.let {
-                        _loginInfo.emit(it)
-                    } ?: delay(1000L)
+                    val loginInfo = data.takeIf { it.qrStatus == 3 }?.loginInfo
+                    if (loginInfo != null) {
+                        _loginInfo.emit(loginInfo)
+                        break
+                    } else {
+                        delay(1000L)
+                    }
                 }
             }
         }.onFailure {
@@ -104,9 +104,7 @@ data class LoginInfo(
     val iconUrl: String
 )
 
-
 /*
-
         "baseResp": {
             "repeatedFailRet": [],
             "ret": 0
@@ -130,7 +128,7 @@ data class BaseResp(
 data class WeChatStickerResp<T>(
     val data: T,
     val errCode: Int,
-    val errMsg: String
+    val errMsg: String = ""
 )
 
 @Composable
@@ -150,6 +148,10 @@ fun WeChatSticker() {
                 "https://sticker.weixin.qq.com/cgi-bin/mmemoticonwebnode-bin/mobile/login/user?qrTicket=$qrTicket",
                 contentDescription = "二维码"
             )
+        }
+        val loginInfo by viewModel.loginInfo.collectAsState()
+        loginInfo?.iconUrl?.takeIf { it.isNotEmpty() }.let {
+            AsyncImage(model = it, contentDescription = null)
         }
     }
 }

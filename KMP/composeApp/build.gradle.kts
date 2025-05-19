@@ -41,7 +41,7 @@ kotlin {
     }
 
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
 
@@ -63,6 +63,8 @@ kotlin {
             implementation(libs.io.ktor.contentNegotiation)
             implementation(libs.io.ktor.serialization.json)
             implementation(libs.network.chaintech.qrkit)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.okhttp)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
