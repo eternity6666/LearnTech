@@ -23,7 +23,8 @@ class WeChatStickerViewModel : ViewModel() {
 
     fun login() {
         viewModelScope.launch {
-            val data = httpClient.get("https://sticker.weixin.qq.com/cgi-bin/mmemoticonwebnode-bin/api/sticker/home/getQrCode?scene=1")
+            val data =
+                httpClient.get("https://sticker.weixin.qq.com/cgi-bin/mmemoticonwebnode-bin/api/sticker/home/getQrCode?scene=1")
             val resp = data.body<WeChatStickerResp<QrTicket>>()
             println(resp.data.qrTicket)
         }
@@ -40,7 +41,14 @@ class WeChatStickerViewModel : ViewModel() {
  */
 @Serializable
 data class QrTicket(
+    val baseResp: BaseResp,
     val qrTicket: String
+)
+
+@Serializable
+data class BaseResp(
+    val repeatedFailRet: List<String>,
+    val ret: Int
 )
 
 @Serializable
