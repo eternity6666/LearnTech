@@ -4,6 +4,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.ktor.client.HttpClient
@@ -62,9 +64,11 @@ data class WeChatStickerResp<T>(
 fun WeChatSticker() {
     val viewModel = remember { WeChatStickerViewModel() }
 
-    Button(onClick = {
-        viewModel.login()
-    }) {
+    Button(
+        onClick = {
+            viewModel.login()
+        }
+    ) {
         Text("Login")
     }
 }
