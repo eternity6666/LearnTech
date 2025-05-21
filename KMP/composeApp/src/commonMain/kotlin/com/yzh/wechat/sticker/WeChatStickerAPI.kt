@@ -3,23 +3,23 @@ package com.yzh.wechat.sticker
 import com.yzh.network.API
 import com.yzh.wechat.sticker.data.CheckQrTicketForLogin
 import com.yzh.wechat.sticker.data.QrTicket
+import com.yzh.wechat.sticker.data.StickerList
 import com.yzh.wechat.sticker.data.WeChatStickerResp
 
 class WeChatStickerAPI {
 
     suspend fun getQrCode(): QrTicket {
-        return Request.GetQrCode.query()
-    }
-
-    fun getQrCode(qrTicket: String): String {
-        return "$BASE_URL/mobile/login/user?qrTicket=$qrTicket"
+        return Request.GetQrCode.queryWebNode()
     }
 
     suspend fun checkQrTicketForLogin(qrTicket: String): CheckQrTicketForLogin {
         return Request.CheckQrTicketForLogin(qrTicket)
-            .query<CheckQrTicketForLogin>()
+            .queryWebNode<CheckQrTicketForLogin>()
     }
 
+    suspend fun getStickerList(): StickerList {
+        return Request.StickerList.query()
+    }
 
     private sealed class Request(
         val type: API.APIType = API.APIType.GET
@@ -28,7 +28,7 @@ class WeChatStickerAPI {
 
         data object GetQrCode : Request() {
             override val cgi: String
-                get() = "/api/sticker/home/getQrCode?scene=1"
+                get() = "/cgi-bin/mmemoticonwebnode-bin/api/sticker/home/getQrCode?scene=1"
 
         }
 
@@ -36,18 +36,34 @@ class WeChatStickerAPI {
             val qrTicket: String
         ) : Request() {
             override val cgi: String
-                get() = "/api/sticker/home/checkQrTicketForLogin?qrTicket=$qrTicket"
+                get() = "/cgi-bin/mmemoticonwebnode-bin/api/sticker/home/checkQrTicketForLogin?qrTicket=$qrTicket"
+        }
+
+        data object StickerList : Request() {
+            override val cgi: String
+                get() = "/cgi-bin/mmemoticon-bin/home?lang=zh_CN&f=json"
         }
     }
 
     companion object {
-        private const val BASE_URL = "https://sticker.weixin.qq.com/cgi-bin/mmemoticonwebnode-bin"
+        private const val BASE_URL = "https://sticker.weixin.qq.com"
 
-        private suspend inline fun <reified T> Request.query(): T {
+        private suspend inline fun <reified T> Request.queryWebNode(): T {
             return API.query<WeChatStickerResp<T>>(
                 url = "$BASE_URL$cgi",
                 type = type
             ).data
+        }
+
+        private suspend inline fun <reified T> Request.query(): T {
+            return API.query<T>(
+                url = "$BASE_URL$cgi",
+                type = type
+            )
+        }
+
+        fun getQrCode(qrTicket: String): String {
+            return "$BASE_URL/mobile/login/user?qrTicket=$qrTicket"
         }
     }
 }

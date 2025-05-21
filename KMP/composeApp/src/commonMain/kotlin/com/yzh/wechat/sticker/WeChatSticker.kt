@@ -27,7 +27,7 @@ class WeChatStickerViewModel : ViewModel() {
         qrTicket.takeIf {
             it.isNotEmpty()
         }?.let {
-            api.getQrCode(qrTicket = it)
+            WeChatStickerAPI.getQrCode(qrTicket = it)
         }.orEmpty()
     }
     private val _loginInfo: MutableStateFlow<WeChatStickerLoginInfo?> = MutableStateFlow(null)
