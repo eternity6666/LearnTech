@@ -10,37 +10,35 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil3.compose.AsyncImage
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
-import io.ktor.serialization.kotlinx.json.json
+import com.yzh.components.QRCode
+import com.yzh.wechat.sticker.data.WeChatStickerLoginInfo
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import kotlinx.serialization.Serializable
-import qrgenerator.QRCodeImage
 
 class WeChatStickerViewModel : ViewModel() {
-    private val httpClient = HttpClient {
-        install(ContentNegotiation) {
-            json()
-        }
-    }
+    private val api = WeChatStickerAPI()
     private val _qrTicket: MutableStateFlow<String> = MutableStateFlow("")
-    val qrTicket = _qrTicket.asStateFlow()
-    private val _loginInfo: MutableStateFlow<LoginInfo?> = MutableStateFlow(null)
+    val loginQrCodeUrl = _qrTicket.map { qrTicket ->
+        qrTicket.takeIf {
+            it.isNotEmpty()
+        }?.let {
+            api.getQrCode(qrTicket = it)
+        }.orEmpty()
+    }
+    private val _loginInfo: MutableStateFlow<WeChatStickerLoginInfo?> = MutableStateFlow(null)
     val loginInfo = _loginInfo.asStateFlow()
+    private var loginJob: Job? = null
 
     fun login() {
-        viewModelScope.launch {
-            val data = httpClient.get(
-                "https://sticker.weixin.qq.com/cgi-bin/mmemoticonwebnode-bin/api/sticker/home/getQrCode?scene=1"
-            )
-            val resp = data.body<WeChatStickerResp<QrTicket>>()
-            val qrTicket = resp.data.qrTicket
+        loginJob?.cancel()
+        loginJob = viewModelScope.launch {
+            val resp = api.getQrCode()
+            val qrTicket = resp.qrTicket
             println("qrTicket=$qrTicket")
             if (qrTicket.isNotEmpty()) {
                 _qrTicket.emit(qrTicket)
@@ -54,12 +52,9 @@ class WeChatStickerViewModel : ViewModel() {
             withTimeout(60 * 1000) {
                 while (true) {
                     println("queryLoginSuccess qrTicket=$qrTicket")
-                    val resp = httpClient.get(
-                        "https://sticker.weixin.qq.com/cgi-bin/mmemoticonwebnode-bin/api/sticker/home/checkQrTicketForLogin?qrTicket=$qrTicket"
-                    )
-                    val data = resp.body<WeChatStickerResp<CheckQrTicketForLogin>>().data
-                    println(data)
-                    val loginInfo = data.takeIf { it.qrStatus == 3 }?.loginInfo
+                    val resp = api.checkQrTicketForLogin(qrTicket)
+                    println(resp)
+                    val loginInfo = resp.takeIf { it.qrStatus == 3 }?.loginInfo
                     if (loginInfo != null) {
                         _loginInfo.emit(loginInfo)
                         break
@@ -76,60 +71,6 @@ class WeChatStickerViewModel : ViewModel() {
     }
 }
 
-/*
-{
-    "data":{
-        "baseResp":{
-            "repeatedFailRet":[],
-            "ret":0,
-            "redirectUrl":""
-        },
-        "qrStatus":3,
-        "loginInfo":{
-            "iconUrl":"http://wx.qlogo.cn/finderhead/Q3auHgzwzM5MUKfdOno7aDPJXfruyZic4TlLw7FCt88QcPnELr02wgQ/0"
-        }
-    },
-    "errCode":0
-}
- */
-@Serializable
-data class CheckQrTicketForLogin(
-    val baseResp: BaseResp,
-    val qrStatus: Int,
-    val loginInfo: LoginInfo? = null
-)
-
-@Serializable
-data class LoginInfo(
-    val iconUrl: String
-)
-
-/*
-        "baseResp": {
-            "repeatedFailRet": [],
-            "ret": 0
-        },
-        "qrTicket": "ek1HMlFMK3hCVHBZWTYvajlUQ2lDQT09"
- */
-@Serializable
-data class QrTicket(
-    val baseResp: BaseResp,
-    val qrTicket: String
-)
-
-@Serializable
-data class BaseResp(
-    val repeatedFailRet: List<String>,
-    val ret: Int,
-    val redirectUrl: String = ""
-)
-
-@Serializable
-data class WeChatStickerResp<T>(
-    val data: T,
-    val errCode: Int,
-    val errMsg: String = ""
-)
 
 @Composable
 fun WeChatSticker() {
@@ -142,12 +83,9 @@ fun WeChatSticker() {
         ) {
             Text("Login")
         }
-        val qrTicket by viewModel.qrTicket.collectAsState()
-        if (qrTicket.isNotEmpty()) {
-            QRCodeImage(
-                "https://sticker.weixin.qq.com/cgi-bin/mmemoticonwebnode-bin/mobile/login/user?qrTicket=$qrTicket",
-                contentDescription = "二维码"
-            )
+        val qrCodeUrl by viewModel.loginQrCodeUrl.collectAsState("")
+        if (qrCodeUrl.isNotEmpty()) {
+            QRCode(qrCodeUrl)
         }
         val loginInfo by viewModel.loginInfo.collectAsState()
         loginInfo?.iconUrl?.takeIf { it.isNotEmpty() }.let {

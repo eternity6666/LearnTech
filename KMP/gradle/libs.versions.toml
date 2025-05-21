@@ -35,9 +35,11 @@ io-ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "kt
 io-ktor-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 io-ktor-contentNegotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 io-ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+io-ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 network-chaintech-qrkit = { group = "network.chaintech", name = "qr-kit", version = "3.0.6" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+logback-classic = { group = "ch.qos.logback", name = "logback-classic", version = "1.5.18" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
