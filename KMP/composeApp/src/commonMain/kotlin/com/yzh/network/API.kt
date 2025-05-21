@@ -11,11 +11,15 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 
 object API {
     val httpClient = HttpClient {
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
         }
         install(HttpCookies) {
             storage = FileCookiesStorage()
