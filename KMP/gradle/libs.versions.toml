@@ -38,7 +38,7 @@ io-ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kot
 io-ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 network-chaintech-qrkit = { group = "network.chaintech", name = "qr-kit", version = "3.0.6" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
-coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version = "1.5.18" }
 
 [plugins]

@@ -63,7 +63,7 @@ class WeChatStickerAPI {
         }
 
         fun getQrCode(qrTicket: String): String {
-            return "$BASE_URL/mobile/login/user?qrTicket=$qrTicket"
+            return "$BASE_URL/cgi-bin/mmemoticonwebnode-bin/mobile/login/user?qrTicket=$qrTicket"
         }
     }
 }
