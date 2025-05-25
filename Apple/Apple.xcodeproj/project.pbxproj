@@ -7,13 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2B127C8E2DC125EB00A770E0 /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B127C8D2DC125EB00A770E0 /* SwiftCommon */; };
-		2B4931B32DC0ADC7009418FE /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B4931B22DC0ADC7009418FE /* SwiftCommon */; };
-		2B6DB7FD2DC13AE500D7768F /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B6DB7FC2DC13AE500D7768F /* SwiftCommon */; };
-		2B6DB8012DC146E300D7768F /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B6DB8002DC146E300D7768F /* SwiftCommon */; };
+		2B783D872DE37CD9005A7DBA /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B783D862DE37CD9005A7DBA /* SwiftCommon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2B427D1F2DE361AF00C49627 /* SwiftCommon */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SwiftCommon; path = ../../SwiftCommon; sourceTree = "<group>"; };
 		2B53A6A92DB229C000CA83E2 /* Apple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Apple.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -43,20 +41,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B4931B32DC0ADC7009418FE /* SwiftCommon in Frameworks */,
-				2B6DB8012DC146E300D7768F /* SwiftCommon in Frameworks */,
-				2B6DB7FD2DC13AE500D7768F /* SwiftCommon in Frameworks */,
-				2B127C8E2DC125EB00A770E0 /* SwiftCommon in Frameworks */,
+				2B783D872DE37CD9005A7DBA /* SwiftCommon in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2B427D1E2DE361AF00C49627 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2B427D1F2DE361AF00C49627 /* SwiftCommon */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2B53A6A02DB229C000CA83E2 = {
 			isa = PBXGroup;
 			children = (
 				2B53A6AB2DB229C000CA83E2 /* Apple */,
+				2B427D1E2DE361AF00C49627 /* Frameworks */,
 				2B53A6AA2DB229C000CA83E2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -89,10 +93,7 @@
 			);
 			name = Apple;
 			packageProductDependencies = (
-				2B4931B22DC0ADC7009418FE /* SwiftCommon */,
-				2B127C8D2DC125EB00A770E0 /* SwiftCommon */,
-				2B6DB7FC2DC13AE500D7768F /* SwiftCommon */,
-				2B6DB8002DC146E300D7768F /* SwiftCommon */,
+				2B783D862DE37CD9005A7DBA /* SwiftCommon */,
 			);
 			productName = Apple;
 			productReference = 2B53A6A92DB229C000CA83E2 /* Apple.app */;
@@ -123,7 +124,7 @@
 			mainGroup = 2B53A6A02DB229C000CA83E2;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2B6DB7FF2DC146E300D7768F /* XCRemoteSwiftPackageReference "SwiftCommon" */,
+				2B783D852DE37CD9005A7DBA /* XCLocalSwiftPackageReference "../../SwiftCommon" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2B53A6AA2DB229C000CA83E2 /* Products */;
@@ -295,7 +296,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.2;
@@ -335,7 +336,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.2;
@@ -375,33 +376,16 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		2B6DB7FF2DC146E300D7768F /* XCRemoteSwiftPackageReference "SwiftCommon" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/eternity6666/SwiftCommon";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.2;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		2B783D852DE37CD9005A7DBA /* XCLocalSwiftPackageReference "../../SwiftCommon" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../SwiftCommon;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2B127C8D2DC125EB00A770E0 /* SwiftCommon */ = {
+		2B783D862DE37CD9005A7DBA /* SwiftCommon */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = SwiftCommon;
-		};
-		2B4931B22DC0ADC7009418FE /* SwiftCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SwiftCommon;
-		};
-		2B6DB7FC2DC13AE500D7768F /* SwiftCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SwiftCommon;
-		};
-		2B6DB8002DC146E300D7768F /* SwiftCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2B6DB7FF2DC146E300D7768F /* XCRemoteSwiftPackageReference "SwiftCommon" */;
 			productName = SwiftCommon;
 		};
 /* End XCSwiftPackageProductDependency section */

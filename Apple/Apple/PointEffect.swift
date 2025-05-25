@@ -8,7 +8,9 @@
 import SwiftUI
 import SpriteKit
 import ImageIO
+#if os(macOS)
 import AppKit
+#endif
 import UniformTypeIdentifiers
 import SwiftCommon
 
