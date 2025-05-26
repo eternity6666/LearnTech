@@ -40,7 +40,9 @@ class TopBottomViewModel {
         self.updateTextArray()
     }
 
-    private func dirUrl() -> URL? {
+    static func dirUrl(
+        title: String
+    ) -> URL? {
         guard let downloadPath = NSSearchPathForDirectoriesInDomains(
             .downloadsDirectory,
             .userDomainMask, true
@@ -64,7 +66,7 @@ class TopBottomViewModel {
     
     @MainActor
     func output() {
-        if let url = dirUrl() {
+        if let url = Self.dirUrl(title: title) {
             outputStickers(url)
             outputPNG(url: url, text: title, size: .init(width: 500, height: 500))
             outputPNG(url: url, text: subTitle, size: .init(width: 750, height: 400))
@@ -103,6 +105,17 @@ class TopBottomViewModel {
         text: String,
         size: CGSize
     ) {
+        Self.outputPNG(url: url, text: text, size: size, color: color, fontType: fontType)
+    }
+    
+    @MainActor
+    static func outputPNG(
+        url: URL,
+        text: String,
+        size: CGSize,
+        color: Color,
+        fontType: FontType
+    ) {
         let fileUrl = url.appendingPathComponent("\(text).png")
         let isSuccess = OutputImg.outputPNG(url: fileUrl) {
             VStack {
@@ -112,7 +125,7 @@ class TopBottomViewModel {
             .padding()
             .lineLimit(1)
             .minimumScaleFactor(0.01)
-            .font(self.fontType.font(max(size.width, size.height)))
+            .font(fontType.font(max(size.width, size.height)))
             .frame(width: size.width, height: size.height)
             .background(color.opacity(0.2))
         }

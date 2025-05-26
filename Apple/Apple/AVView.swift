@@ -5,6 +5,8 @@
 //  Created by Y1616 on 2025/5/25.
 //
 
+#if os(macOS)
+#else
 import SwiftUI
 import AVFoundation
 import Accelerate
@@ -61,3 +63,4 @@ class AudioAnalyzer {
     private func processBuffer(_ buffer: AVAudioPCMBuffer) {
     }
 }
+#endif
