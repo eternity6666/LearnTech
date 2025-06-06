@@ -12,9 +12,18 @@ struct ContentView: View {
         VStack {
 //            AnimatedSineWaveDemo()
 //            ColorTextView()
-            TopBottomTextView()
+//            TopBottomTextView()
+            DeviceInfoView()
         }
         .padding()
+    }
+}
+
+struct DeviceInfoView: View {
+    var body: some View {
+        VStack {
+            
+        }
     }
 }
 
