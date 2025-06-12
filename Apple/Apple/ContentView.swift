@@ -19,10 +19,13 @@ struct ContentView: View {
     }
 }
 
+@available(iOS 2.0, *)
 struct DeviceInfoView: View {
     var body: some View {
         VStack {
-            
+            Text("\(UIDevice.current.batteryLevel)")
+            Text("\(UIDevice.current.batteryState)")
+            Text("\(UIDevice.current.proximityState)")
         }
     }
 }

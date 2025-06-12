@@ -9,6 +9,13 @@ import SwiftUI
 
 @main
 struct AppleApp: App {
+
+    init() {
+        let device = UIDevice.current
+        device.isBatteryMonitoringEnabled = true
+        device.isProximityMonitoringEnabled = true
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
