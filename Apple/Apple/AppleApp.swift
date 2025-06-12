@@ -11,9 +11,11 @@ import SwiftUI
 struct AppleApp: App {
 
     init() {
+#if os(iOS)
         let device = UIDevice.current
         device.isBatteryMonitoringEnabled = true
         device.isProximityMonitoringEnabled = true
+#endif
     }
     
     var body: some Scene {

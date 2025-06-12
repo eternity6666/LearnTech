@@ -16,6 +16,13 @@ struct OutputImg {
         /// 单位: 秒
         let delayTime: CGFloat
         let outputPath: URL
+
+        init(frameCount: Int = 30, width: CGFloat = 240, delayTime: CGFloat = 0.05, outputPath: URL) {
+            self.frameCount = frameCount
+            self.width = width
+            self.delayTime = delayTime
+            self.outputPath = outputPath
+        }
     }
     
     static func outputGif(
@@ -52,7 +59,6 @@ struct OutputImg {
         var offset: CGFloat = 0
         let diffOffset = 1.0 / Double(frameCount)
         for _ in 0 ..< frameCount {
-            print(offset)
             let renderer = ImageRenderer(content: view(offset))
             renderer.scale = 4
             if let image = renderer.cgImage {

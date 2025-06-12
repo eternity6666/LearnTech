@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 @available(iOS 2.0, *)
 extension UIDevice.BatteryState {
     var name: String {
@@ -23,5 +24,5 @@ extension UIDevice.BatteryState {
             "未知类型\(self.rawValue)"
         }
     }
-    
 }
+#endif
