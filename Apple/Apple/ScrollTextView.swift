@@ -31,24 +31,31 @@ func SaveGIFButton(
 }
 
 struct ScrollTextView: View {
-    private var textList = [
-        "太有石粒辣！！！",
-        "干饭啦！干饭啦！",
-        "太棒啦！太棒啦！",
-        "有点东西！！！",
-        "好的！好的！",
-        "谢谢！谢谢！",
-        "感谢！感谢！",
-        "OK！！！",
-        "下班了？下班啦！",
-        "真可恶！真可恶！",
-        "彳亍口巴",
-        "干饭人！干饭魂！",
-        "在吗？在吗？",
-        "互联网太有意思了",
-        "他急了！他急了！",
-        "真行！真行！！"
-    ]
+    @State
+    private var textStr: String = ""
+    private var textList: [String] {
+        let list = textStr.split { char in
+            ",，".contains(where: { char == $0})
+        }.map({ String($0) })
+        return !list.isEmpty ? list : [
+            "太有石粒辣！！！",
+            "干饭啦！干饭啦！",
+            "太棒啦！太棒啦！",
+            "有点东西！！！",
+            "好的！好的！",
+            "谢谢！谢谢！",
+            "感谢！感谢！",
+            "OK！！！",
+            "下班了？下班啦！",
+            "真可恶！真可恶！",
+            "彳亍口巴",
+            "干饭人！干饭魂！",
+            "在吗？在吗？",
+            "互联网太有意思了",
+            "他急了！他急了！",
+            "真行！真行！！"
+        ]
+    }
     private let frameCount: Int = 20
     @State
     private var frameIndex: Int = 0
@@ -61,7 +68,9 @@ struct ScrollTextView: View {
         0.2 / Double(frameCount)
     }
     @State
-    private var color: Color = .cyan
+    private var color: Color = .primary
+    @State
+    private var themeColor: Color = .orange
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -70,9 +79,9 @@ struct ScrollTextView: View {
             }
             HStack {
                 Text("个数\(self.textList.count)")
-                let title = "瞎叨叨"
-                let subTitle = "就爱瞎叨叨"
-                SaveGIFButton(dirTitle: "瞎叨叨") { url in
+                let title = "就你会说"
+                let subTitle = "就你会说！"
+                SaveGIFButton(dirTitle: title) { url in
                     outputGIF(url)
                     outputPNG(url: url, text: title, size: .init(width: 500, height: 500))
                     outputPNG(url: url, text: subTitle, size: .init(width: 750, height: 400))
@@ -104,14 +113,14 @@ struct ScrollTextView: View {
         let isSuccess = OutputImg.outputPNG(url: fileUrl) {
             VStack {
                 Text(text)
-                    .foregroundStyle(self.color)
+                    .foregroundStyle(self.themeColor)
             }
             .padding()
             .lineLimit(1)
             .minimumScaleFactor(0.01)
             .font(.youSheBiaoTiHei(max(size.width, size.height)))
             .frame(width: size.width, height: size.height)
-            .background(self.color.opacity(0.2))
+            .background(self.themeColor.opacity(0.2))
         }
         let fileUrlStr = fileUrl.absoluteString
         print("[outputPNG]: \(fileUrlStr.removingPercentEncoding ?? fileUrlStr) \(isSuccess)")
@@ -229,8 +238,9 @@ struct ScrollTextItemView: View {
             .background {
                 background
             }
-            .font(.youSheBiaoTiHei(24))
+            .font(.system(size: 24))
             .foregroundStyle(color)
+            .bold()
     }
     
     private var background: some View {
