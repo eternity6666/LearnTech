@@ -32,29 +32,11 @@ func SaveGIFButton(
 
 struct ScrollTextView: View {
     @State
-    private var textStr: String = ""
+    private var textStr: String = "我在四川等你"
     private var textList: [String] {
-        let list = textStr.split { char in
+        self.textStr.split { char in
             ",，".contains(where: { char == $0})
         }.map({ String($0) })
-        return !list.isEmpty ? list : [
-            "太有石粒辣！！！",
-            "干饭啦！干饭啦！",
-            "太棒啦！太棒啦！",
-            "有点东西！！！",
-            "好的！好的！",
-            "谢谢！谢谢！",
-            "感谢！感谢！",
-            "OK！！！",
-            "下班了？下班啦！",
-            "真可恶！真可恶！",
-            "彳亍口巴",
-            "干饭人！干饭魂！",
-            "在吗？在吗？",
-            "互联网太有意思了",
-            "他急了！他急了！",
-            "真行！真行！！"
-        ]
     }
     private let frameCount: Int = 20
     @State
