@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B0BB3D42DFF366800E457DF /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 2B0BB3D32DFF366800E457DF /* Alamofire */; };
 		2B783D872DE37CD9005A7DBA /* SwiftCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2B783D862DE37CD9005A7DBA /* SwiftCommon */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B783D872DE37CD9005A7DBA /* SwiftCommon in Frameworks */,
+				2B0BB3D42DFF366800E457DF /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +96,7 @@
 			name = Apple;
 			packageProductDependencies = (
 				2B783D862DE37CD9005A7DBA /* SwiftCommon */,
+				2B0BB3D32DFF366800E457DF /* Alamofire */,
 			);
 			productName = Apple;
 			productReference = 2B53A6A92DB229C000CA83E2 /* Apple.app */;
@@ -125,6 +128,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2B783D852DE37CD9005A7DBA /* XCLocalSwiftPackageReference "../../SwiftCommon" */,
+				2B0BB3D22DFF366800E457DF /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2B53A6AA2DB229C000CA83E2 /* Products */;
@@ -383,7 +387,23 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		2B0BB3D22DFF366800E457DF /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		2B0BB3D32DFF366800E457DF /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2B0BB3D22DFF366800E457DF /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		2B783D862DE37CD9005A7DBA /* SwiftCommon */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftCommon;
