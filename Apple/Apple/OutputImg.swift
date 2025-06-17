@@ -44,6 +44,7 @@ struct OutputImg {
         view: () -> some View
     ) -> Bool {
         let renderer = ImageRenderer(content: view())
+        renderer.scale = 4
         if let image = renderer.cgImage {
             return createPNG(from: image, outputURL: url)
         }
@@ -106,7 +107,8 @@ struct OutputImg {
             1,
             nil
         ) {
-            CGImageDestinationAddImage(destination, image, nil)
+            let options = [kCGImageDestinationLossyCompressionQuality: 1.0] as CFDictionary
+            CGImageDestinationAddImage(destination, image, options)
             CGImageDestinationFinalize(destination)
             return true
         }

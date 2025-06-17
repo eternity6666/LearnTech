@@ -43,9 +43,11 @@ struct WidgetEntryView : View {
 
     var body: some View {
         VStack {
+#if os(iOS)
             Text("\(UIDevice.current.batteryLevel)")
             Text("\(UIDevice.current.batteryState)")
             Text("\(UIDevice.current.proximityState)")
+#endif
         }
     }
 }

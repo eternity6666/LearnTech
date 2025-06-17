@@ -53,12 +53,19 @@ class TopBottomViewModel {
         let folderName: String = "\(title)_\(Int(Date.now.timeIntervalSince1970))"
         let url = URL(fileURLWithPath: downloadPath).appendingPathComponent(folderName)
         do {
-            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+            try createDirIfNeed(url)
             return url
         } catch {
             return nil
         }
     }
+
+    static func createDirIfNeed(
+        _ url: URL
+    ) throws {
+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+    }
+
 
     func font(_ size: CGFloat) -> Font {
         return self.fontType.font(size)
