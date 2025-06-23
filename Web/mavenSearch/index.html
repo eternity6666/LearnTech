@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Maven 搜索助手</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .search-box {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    input {
+      width: 300px;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      margin-left: 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .result-links {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .result-links a {
+      display: block;
+      margin: 0.5rem 0;
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Maven 搜索助手</h1>
+  <div class="search-box">
+    <input type="text" id="query" placeholder="请输入 Maven 包名或关键词" />
+    <button onclick="searchMaven()">搜索</button>
+  </div>
+  <div class="result-links" id="results"></div>
+
+  <script src="./index.js"></script>
+</body>
+
+</html>
