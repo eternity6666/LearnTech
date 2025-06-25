@@ -1,3 +1,3 @@
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Auto Form Filler Extension Installed!');
+  console.log('微信表情表单助手已安装!');
 });
