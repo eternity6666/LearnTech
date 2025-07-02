@@ -47,19 +47,22 @@ function httpRequest(stickerID, headers = {}) {
 
 function trySendUpdateRedCover(response) {
   const KEY = "trySendUpdateRedCover";
+
   function isIn(stickerID) {
     return (localStorage.getItem(KEY) ?? "").split(",").includes(stickerID);
   }
+
   function putIn(stickerID) {
     var list = (localStorage.getItem(KEY) ?? "").split(",");
     list.push(stickerID);
     localStorage.setItem(KEY, list);
   }
+
   const json = JSON.parse(response);
   if (json && json.List) {
     const list = json.List;
     list.forEach((stickerItem) => {
-      const { StikerID, Status, TotalDownloadNum, TotalSendNum, Name } =
+      const {StikerID, Status, TotalDownloadNum, TotalSendNum, Name} =
         stickerItem;
       if (Status === 7) {
         if (!isIn(StikerID)) {
@@ -171,3 +174,13 @@ function trySendUpdateRedCover(response) {
     return send.apply(this, arguments);
   };
 })(XMLHttpRequest);
+
+(function () {
+// 替换原有的 fetch 方法
+    const originalFetch = window.fetch;
+    window.fetch = async function (...args) {
+      const response = await originalFetch(...args);
+      return response; // 返回原始响应
+    }
+  }
+)();
