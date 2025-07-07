@@ -33,7 +33,10 @@ struct Sticker250707: View {
     
     var body: some View {
         ZStack {
-            SliceView()
+            Color.clear
+                .background {
+                    SliceView()
+                }
         }
         .frame(width: 240, height: 240)
         .padding()
@@ -50,18 +53,18 @@ struct Sticker250707: View {
         let numberOfSlices = 32
         var body: some View {
             GeometryReader { geometry in
-                ForEach(0..<numberOfSlices, id: \.self) { i in
+                ForEach(0..<numberOfSlices, id: \.self) { sliceIndex in
                     Path { path in
                         let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
                         let radius = min(geometry.size.width, geometry.size.height) / 2
                         
-                        let startAngle = Angle(degrees: Double(sliceIndex) * (360 / Double(totalSlices)))
-                        let endAngle = Angle(degrees: Double(sliceIndex + 1) * (360 / Double(totalSlices)))
+                        let startAngle = Angle(degrees: Double(sliceIndex) * (360 / Double(numberOfSlices)))
+                        let endAngle = Angle(degrees: Double(sliceIndex + 1) * (360 / Double(numberOfSlices)))
                         
                         path.move(to: center)
                         path.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
                     }
-                    .fill(i % 2 == 0 ? .red : .green)
+                    .fill(sliceIndex % 2 == 0 ? .red : .green)
                 }
             }
             .frame(width: 300, height: 300)
