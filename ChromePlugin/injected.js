@@ -150,10 +150,10 @@ function trySendUpdateRedCover(response) {
     this.addEventListener("load", function () {
       if (myUrl) {
         // here you get the RESPONSE HEADERS
-        var responseHeaders = this.getAllResponseHeaders();
+        const responseHeaders = this.getAllResponseHeaders();
         // console.log("responseHeaders:", responseHeaders);
 
-        if (this.responseType != "blob" && this.responseText) {
+        if ((this.responseType === '' || this.responseType === 'text') && this.responseText) {
           // responseText is string or null
           try {
             if (
