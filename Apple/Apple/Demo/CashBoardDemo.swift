@@ -211,7 +211,9 @@ struct AddTransactionView: View {
         NavigationView {
             Form {
                 TextField("金额", text: $amount)
+#if os(iOS)
                     .keyboardType(.decimalPad)
+                #endif
                 
                 Picker("类型", selection: $type) {
                     Text("收入").tag(TransactionType.income)

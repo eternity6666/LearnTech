@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct FileSearchPathDemo: View {
     @State
     private var viewModel: FileSearchPathDemoViewModel = .init()
@@ -275,3 +276,4 @@ extension FileManager.SearchPathDomainMask {
         }
     }
 }
+#endif

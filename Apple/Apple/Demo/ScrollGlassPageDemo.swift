@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct ScrollGlassPageDemo: View {
     private let topHeight: CGFloat = 120
     @Environment(\.dismiss) var dismiss
@@ -72,3 +73,4 @@ struct TransparentBlurView: UIViewRepresentable {
         }
     }
 }
+#endif

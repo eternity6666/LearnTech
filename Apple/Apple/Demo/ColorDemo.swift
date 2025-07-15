@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct ColorDemo: View {
     private let colorList: [(String, Color)]
     init() {
@@ -104,3 +105,4 @@ struct ColorDemo: View {
 #Preview {
     ColorDemo()
 }
+#endif

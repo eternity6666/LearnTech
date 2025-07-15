@@ -8,6 +8,7 @@
 import SwiftUI
 import AVKit
 
+#if os(iOS)
 struct AVPlayerDemo: View {
     @State var player = AVPlayer()
     @State private var urlStr = "https://tv.iill.top/m3u/Live"
@@ -139,3 +140,4 @@ class SessionDelegate: NSObject, URLSessionDelegate {
 #Preview {
     AVPlayerDemo()
 }
+#endif

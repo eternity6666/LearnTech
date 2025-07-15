@@ -9,6 +9,7 @@ import SwiftUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
 
+#if os(iOS)
 struct PixelatedText: View {
     let text: String
     let fontSize: CGFloat
@@ -146,3 +147,4 @@ func getPixelColors(from image: UIImage) {
     PixelatedView()
         .colorScheme(.dark)
 })
+#endif

@@ -8,6 +8,7 @@
 import SwiftUI
 import Foundation
 
+#if os(iOS)
 struct FileReaderDemo: View {
     @State private var viewModel: FileReaderDemoViewModel = .init()
     
@@ -212,3 +213,4 @@ struct FileReaderDemoFile {
     let filePath: String
     let fileSize: Int
 }
+#endif
