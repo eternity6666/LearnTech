@@ -113,16 +113,16 @@ function trySendUpdateRedCover(response) {
         word: "你若喜欢 给个赞吧",
       };
       jsonData["downloadArea"] = ["DEF"];
-      jsonData["isFree"] = false;
+      jsonData["isFree"] = true;
       jsonData["stickerStyle"] = ["文字内容", "文字内容"];
       jsonData["character"] = ["日常"];
       jsonData["topic"] = "万能通用";
       jsonData["copyright"] = "YZH";
-      jsonData["isStatic"] = true;
+      jsonData["isStatic"] = false;
       jsonData["styleType"] = 1;
       myLocation = "香港";
-      jsonData["name"] = myLocation + "的风";
-      jsonData["description"] = "想你的风吹到了" + myLocation;
+      jsonData["name"] = "是" + myLocation + "鸭";
+      jsonData["description"] = "欢迎你来" + myLocation + "玩";
       console.log("new jsonData: ", jsonData);
       return JSON.stringify(jsonData);
     } catch (err) {
