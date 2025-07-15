@@ -12,14 +12,12 @@ import UniformTypeIdentifiers
 struct OutputImg {
     struct GifConfig {
         let frameCount: Int
-        let width: CGFloat
         /// 单位: 秒
         let delayTime: CGFloat
         let outputPath: URL
 
         init(frameCount: Int = 30, width: CGFloat = 240, delayTime: CGFloat = 0.05, outputPath: URL) {
             self.frameCount = frameCount
-            self.width = width
             self.delayTime = delayTime
             self.outputPath = outputPath
         }
@@ -29,13 +27,7 @@ struct OutputImg {
         config: GifConfig,
         view: (CGFloat) -> some View
     ) -> Bool {
-        let gifFrames = captureGIFFrames(frameCount: config.frameCount, width: config.width, view: view)
-//        gifFrames.enumerated().forEach { (index, image) in
-//            let path = config.outputPath.absoluteString.replacing(".gif", with: "_\(index).png", maxReplacements: 1)
-//            if let url = URL.init(string: path) {
-//                let _ = createPNG(from: image, outputURL: url)
-//            }
-//        }
+        let gifFrames = captureGIFFrames(frameCount: config.frameCount, view: view)
         return createGIF(from: gifFrames, delay: config.delayTime, outputURL: config.outputPath)
     }
 
@@ -53,7 +45,6 @@ struct OutputImg {
 
     static func captureGIFFrames(
         frameCount: Int,
-        width: CGFloat,
         view: (CGFloat) -> some View
     ) -> [CGImage] {
         var images = [CGImage]()

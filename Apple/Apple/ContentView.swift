@@ -81,36 +81,42 @@ extension UISizeType {
 
 enum PageType: CaseIterable, Identifiable {
     var id: Self { self }
-    case fileSearchPath
     case textPage
-    case scrollGlassPage
     case syncTaskInMain
-    case colorPage
     case holidayPlan
     case networkLearn
-    case AVPlayer
     case FileDownload
-    case FileReader
     case CustomLayout
     case Card3D
+    
+#if os(iOS)
+    case AVPlayer
+    case colorPage
+    case FileReader
+    case fileSearchPath
+    case scrollGlassPage
+#endif
 }
 
 extension PageType {
     var view: any View {
         switch self {
-            case .fileSearchPath: FileSearchPathDemo()
-            case .holidayPlan: HolidayPlan()
-            case .textPage: TextDemo()
-            case .scrollGlassPage: ScrollGlassPageDemo()
-            case .syncTaskInMain: SyncTaskInMainDemo()
-            case .colorPage: ColorDemo()
-            case .networkLearn: NetworkLearnDemo()
-            case .AVPlayer: AVPlayerDemo()
-            case .FileDownload: FileDownloadDemo()
-            case .FileReader: FileReaderDemo()
-            case .CustomLayout: CustomLayoutDemo()
-            case .Card3D: Card3DDemo()
-            default: EmptyView()
+        case .holidayPlan: HolidayPlan()
+        case .textPage: TextDemo()
+        case .syncTaskInMain: SyncTaskInMainDemo()
+        case .FileDownload: FileDownloadDemo()
+        case .networkLearn: NetworkLearnDemo()
+        case .CustomLayout: CustomLayoutDemo()
+        case .Card3D: Card3DDemo()
+            
+#if os(iOS)
+        case .AVPlayer: AVPlayerDemo()
+        case .colorPage: ColorDemo()
+        case .FileReader: FileReaderDemo()
+        case .fileSearchPath: FileSearchPathDemo()
+        case .scrollGlassPage: ScrollGlassPageDemo()
+#endif
+        default: EmptyView()
         }
     }
 
