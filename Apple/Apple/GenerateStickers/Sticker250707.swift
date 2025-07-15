@@ -6,11 +6,15 @@
 //
 
 import SwiftUI
+import SwiftCommon
 
 struct Sticker250707Demo: View {
     @State
-    private var config: Sticker250707.Config = .init()
-
+    private var config: Sticker250707.Config = .init(
+        firstLine: "呼和浩特",
+        secondLine: "欢迎你"
+    )
+    
     var body: some View {
         VStack {
             Sticker250707(config: config)
@@ -35,15 +39,67 @@ struct Sticker250707Demo: View {
             }
         }
     }
-
+    
     func output() {
-        
+        Task {
+            if let dirUrl = TopBottomViewModel.dirUrl(title: "Sticker250707") {
+                await outputPNG(url: dirUrl, text: "谢谢你", size: .init(width: 750, height: 750))
+                await outputPNG(url: dirUrl, text: "你若喜欢 给个赞吧", size: .init(width: 750, height: 560))
+                DataSet.country.forEach { (first, second) in
+                    Task {
+                        let url = dirUrl.appendingPathComponent("\(first)")
+                        try? TopBottomViewModel.createDirIfNeed(url)
+                        await outputPNG(url: url, text: first, size: .init(width: 500, height: 500))
+                        await outputPNG(url: url, text: first, size: .init(width: 750, height: 400))
+                        
+                        let stickListUrl = url.appendingPathComponent("stickerList")
+                        try? TopBottomViewModel.createDirIfNeed(stickListUrl)
+                        for title in second {
+                            await outputGIF(url: stickListUrl, text: title)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func outputGIF(
+        url: URL,
+        text: String
+    ) async {
+        let fileUrl = url.appendingPathComponent(text, conformingTo: .gif)
+        let isSuccess = OutputImg.outputGif(
+            config: .init(outputPath: fileUrl)
+        ) { progress in
+            Sticker250707(config: .init(firstLine: text, secondLine: "欢迎你", progress: progress))
+        }
+        let fileUrlStr = fileUrl.absoluteString
+        print("[outputGIF]: \(fileUrlStr.removingPercentEncoding ?? fileUrlStr) \(isSuccess)")
+    }
+    
+    private func outputPNG(
+        url: URL,
+        text: String,
+        size: CGSize
+    ) async {
+        let fileUrl = url.appendingPathComponent("\(text)_\(size.width / 100)x\(size.height / 100).png")
+        let isSuccess = OutputImg.outputPNG(url: fileUrl) {
+            Sticker250707(
+                config: .init(
+                    firstLine: text,
+                    size: size,
+                    fontSize: size.width / 5
+                )
+            )
+        }
+        let fileUrlStr = fileUrl.absoluteString
+        print("[outputPNG]: \(fileUrlStr.removingPercentEncoding ?? fileUrlStr) \(isSuccess)")
     }
 }
 
 struct Sticker250707: View {
     let config: Config
-
+    
     var body: some View {
         ZStack {
             Color.clear
@@ -56,12 +112,17 @@ struct Sticker250707: View {
                 }
             VStack(spacing: 20) {
                 Text(config.firstLine)
-                    .font(.starLoveSweety(50))
+                    .font(.starLoveSweety(config.fontSize))
                     .foregroundStyle(.black)
-                Text(config.secondLine)
-                    .font(.starLoveSweety(40))
-                    .foregroundStyle(.white)
+                if !config.secondLine.isEmpty {
+                    Text(config.secondLine)
+                        .font(.starLoveSweety(config.fontSize * 2 / 3))
+                        .foregroundStyle(.white)
+                }
             }
+            .minimumScaleFactor(0.01)
+            .lineLimit(1)
+            .padding()
         }
         .frame(width: config.size.width, height: config.size.height)
         .clipped()
@@ -71,10 +132,11 @@ struct Sticker250707: View {
     struct Config {
         var bgColor1: Color = Color.orange
         var bgColor2: Color = Color.yellow
-        var firstLine: String = "呼和浩特"
-        var secondLine: String = "欢迎你"
+        var firstLine: String = ""
+        var secondLine: String = ""
         var numberOfSlices = 16
-        var size: CGSize = .init(width: 240, height: 200)
+        var size: CGSize = .init(width: 240, height: 240)
+        var fontSize: CGFloat = 50
         var progress: CGFloat = 0
     }
     

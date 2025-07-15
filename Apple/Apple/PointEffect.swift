@@ -298,7 +298,6 @@ struct AnimatedSineWaveDemo: View {
                         let _ = OutputImg.outputGif(
                             config: .init(
                                 frameCount: frameCount,
-                                width: self.gifWidth,
                                 delayTime: 0.1,
                                 outputPath: fileUrl
                             )

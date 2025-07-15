@@ -16,7 +16,7 @@ struct OutputImg {
         let delayTime: CGFloat
         let outputPath: URL
 
-        init(frameCount: Int = 30, width: CGFloat = 240, delayTime: CGFloat = 0.05, outputPath: URL) {
+        init(frameCount: Int = 30, delayTime: CGFloat = 0.05, outputPath: URL) {
             self.frameCount = frameCount
             self.delayTime = delayTime
             self.outputPath = outputPath
@@ -52,7 +52,7 @@ struct OutputImg {
         let diffOffset = 1.0 / Double(frameCount)
         for _ in 0 ..< frameCount {
             let renderer = ImageRenderer(content: view(offset))
-            renderer.scale = 4
+            renderer.scale = 2
             if let image = renderer.cgImage {
                 images.append(image)
             }

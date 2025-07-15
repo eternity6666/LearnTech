@@ -42,7 +42,6 @@ struct ColorTextView: View {
             let isSuccess = OutputImg.outputGif(
                 config: .init(
                     frameCount: num,
-                    width: self.size.width,
                     delayTime: 0.05,
                     outputPath: fileUrl
                 )

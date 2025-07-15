@@ -89,7 +89,6 @@ class TopBottomViewModel {
             let isSuccess = OutputImg.outputGif(
                 config: .init(
                     frameCount: self.frameCount,
-                    width: self.size.width,
                     delayTime: 0.05,
                     outputPath: fileUrl
                 )
