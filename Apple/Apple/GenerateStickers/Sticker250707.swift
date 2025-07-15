@@ -82,13 +82,13 @@ struct Sticker250707Demo: View {
         text: String,
         size: CGSize
     ) async {
-        let fileUrl = url.appendingPathComponent("\(text)_\(size.width / 100)x\(size.height / 100).png")
+        let fileUrl = url.appendingPathComponent("\(text)_\(Int(size.width))x\(Int(size.height)).png")
         let isSuccess = OutputImg.outputPNG(url: fileUrl) {
             Sticker250707(
                 config: .init(
                     firstLine: text,
                     size: size,
-                    fontSize: size.width / 5
+                    fontSize: size.width / 4
                 )
             )
         }
