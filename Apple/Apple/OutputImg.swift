@@ -36,7 +36,7 @@ struct OutputImg {
         view: () -> some View
     ) -> Bool {
         let renderer = ImageRenderer(content: view())
-        renderer.scale = 4
+        renderer.scale = 3
         if let image = renderer.cgImage {
             return createPNG(from: image, outputURL: url)
         }

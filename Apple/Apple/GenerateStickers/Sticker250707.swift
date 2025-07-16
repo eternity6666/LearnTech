@@ -11,8 +11,9 @@ import SwiftCommon
 struct Sticker250707Demo: View {
     @State
     private var config: Sticker250707.Config = .init(
-        firstLine: "呼和浩特",
-        secondLine: "欢迎你"
+        firstLine: "呼和浩特堂",
+        secondLine: "欢迎你",
+        clipRadius: 16
     )
     
     var body: some View {
@@ -71,7 +72,14 @@ struct Sticker250707Demo: View {
         let isSuccess = OutputImg.outputGif(
             config: .init(outputPath: fileUrl)
         ) { progress in
-            Sticker250707(config: .init(firstLine: text, secondLine: "欢迎你", progress: progress))
+            Sticker250707(
+                config: .init(
+                    firstLine: text,
+                    secondLine: "欢迎你",
+                    progress: progress,
+                    clipRadius: 16
+                )
+            )
         }
         let fileUrlStr = fileUrl.absoluteString
         print("[outputGIF]: \(fileUrlStr.removingPercentEncoding ?? fileUrlStr) \(isSuccess)")
@@ -109,15 +117,24 @@ struct Sticker250707: View {
                         .rotationEffect(.degrees(45))
                         .rotationEffect(.degrees(90 * config.progress))
                         .frame(width: widthAndHeight, height: widthAndHeight)
+                        .blur(radius: 0.5)
                 }
+                .overlay {
+                    RoundedRectangle(cornerRadius: config.clipRadius)
+                        .stroke(config.bgColor1, lineWidth: config.strokeWidth)
+                        .blur(radius: 1)
+                }
+                .clipShape(.rect(cornerRadius: config.clipRadius), style: .init(eoFill: true, antialiased: true))
             VStack(spacing: 20) {
                 Text(config.firstLine)
                     .font(.starLoveSweety(config.fontSize))
                     .foregroundStyle(.black)
+                    .blur(radius: 0.2)
                 if !config.secondLine.isEmpty {
                     Text(config.secondLine)
-                        .font(.starLoveSweety(config.fontSize * 2 / 3))
+                        .font(.starLoveSweety(config.fontSize * 0.8))
                         .foregroundStyle(.white)
+                        .blur(radius: 0.5)
                 }
             }
             .minimumScaleFactor(0.01)
@@ -126,7 +143,6 @@ struct Sticker250707: View {
         }
         .frame(width: config.size.width, height: config.size.height)
         .clipped()
-        .padding()
     }
     
     struct Config {
@@ -138,6 +154,8 @@ struct Sticker250707: View {
         var size: CGSize = .init(width: 240, height: 240)
         var fontSize: CGFloat = 50
         var progress: CGFloat = 0
+        var clipRadius: CGFloat = 0
+        var strokeWidth: CGFloat = 8
     }
     
     struct SliceView: View {

@@ -120,7 +120,7 @@ function trySendUpdateRedCover(response) {
       jsonData["copyright"] = "YZH";
       jsonData["isStatic"] = false;
       jsonData["styleType"] = 1;
-      myLocation = "香港";
+      myLocation = "广东";
       jsonData["name"] = "是" + myLocation + "鸭";
       jsonData["description"] = "欢迎你来" + myLocation + "玩";
       console.log("new jsonData: ", jsonData);
